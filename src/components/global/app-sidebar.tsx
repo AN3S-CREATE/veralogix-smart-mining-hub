@@ -1,9 +1,9 @@
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarHeader,
   SidebarContent,
-  SidebarFooter,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
@@ -24,8 +24,15 @@ import {
   Network,
   Factory,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const menuItems = [
+interface MenuItem {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+}
+
+const adminMenuItems: MenuItem[] = [
   { href: "/hub", label: "Overview", icon: Home },
   { href: "/operator", label: "Operator", icon: User },
   { href: "/supervisor", label: "Supervisor", icon: Users },
@@ -41,7 +48,38 @@ const menuItems = [
   { href: "/sensors", label: "Sensor Stack", icon: Network },
 ];
 
+const executiveMenuItems: MenuItem[] = [
+  { href: "/executive", label: "Executive", icon: Briefcase },
+  { href: "/reports", label: "Reports", icon: FileText },
+];
+
+const supervisorMenuItems: MenuItem[] = [
+  { href: "/supervisor", label: "Supervisor", icon: Users },
+  { href: "/fleet", label: "Fleet & Haulage", icon: Truck },
+  { href: "/earthworks", label: "Earthworks", icon: Mountain },
+  { href: "/safety", label: "Safety & CPS", icon: Shield },
+  { href: "/compliance", label: "Compliance", icon: ClipboardCheck },
+  { href: "/drones", label: "VTOL & Survey", icon: Camera },
+  { href: "/plant", label: "Plant & Tailings", icon: Factory },
+];
+
+const operatorMenuItems: MenuItem[] = [
+  { href: "/operator", label: "Operator", icon: User },
+];
+
+const getMenuItemsForRole = (pathname: string): MenuItem[] => {
+  if (pathname.startsWith('/executive')) return executiveMenuItems;
+  if (pathname.startsWith('/supervisor')) return supervisorMenuItems;
+  if (pathname.startsWith('/operator')) return operatorMenuItems;
+  // Default to admin/hub which shows all
+  return adminMenuItems;
+}
+
+
 export function AppSidebar() {
+  const pathname = usePathname();
+  const menuItems = getMenuItemsForRole(pathname);
+
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
@@ -54,8 +92,7 @@ export function AppSidebar() {
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              {/* In a real app, we'd use usePathname to determine isActive */}
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild isActive={pathname.startsWith(item.href)}>
                 <Link href={item.href}>
                   <item.icon />
                   <span>{item.label}</span>
@@ -65,9 +102,6 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarSeparator />
-      </SidebarFooter>
     </Sidebar>
   );
 }
