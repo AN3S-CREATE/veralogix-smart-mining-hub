@@ -1,6 +1,6 @@
-import { ComplianceKpiGrid } from "./components/compliance-kpi-grid";
+import { WorkforceComplianceKpiGrid } from "./components/workforce-compliance-kpi-grid";
 import { GateActivityCard } from "./components/gate-activity-card";
-import { ComplianceOverviewCard } from "./components/compliance-overview-card";
+import { WorkforceComplianceOverviewCard } from "./components/workforce-compliance-overview-card";
 import { AuditReadinessCard } from "./components/audit-readiness-card";
 
 export default function CompliancePage() {
@@ -11,14 +11,14 @@ export default function CompliancePage() {
         <p className="text-muted-foreground">Monitor and manage regulatory and internal compliance with SentryMine™.</p>
       </header>
 
-      <ComplianceKpiGrid />
+      <WorkforceComplianceKpiGrid />
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
         <div className="lg:col-span-3">
             <GateActivityCard />
         </div>
         <div className="lg:col-span-2">
-            <ComplianceOverviewCard />
+            <WorkforceComplianceOverviewCard />
         </div>
       </div>
 
