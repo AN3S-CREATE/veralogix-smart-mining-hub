@@ -2,6 +2,8 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/global/app-sidebar";
 import { Header } from "@/components/global/header";
 import { OfflineBanner } from "@/components/shared/offline-banner";
+import { PageLoader } from "@/components/global/page-loader";
+import { Suspense } from "react";
 
 export default function DashboardLayout({
   children,
@@ -10,6 +12,9 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
+      <Suspense>
+        <PageLoader />
+      </Suspense>
       <AppSidebar />
       <SidebarInset>
         <div className="flex flex-col min-h-screen">
