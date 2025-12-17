@@ -12,9 +12,7 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <Suspense>
-        <PageLoader />
-      </Suspense>
+      <PageLoader />
       <AppSidebar />
       <SidebarInset>
         <div className="flex flex-col min-h-screen">
