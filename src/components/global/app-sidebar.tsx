@@ -48,37 +48,9 @@ const adminMenuItems: MenuItem[] = [
   { href: "/sensors", label: "Sensor Stack", icon: Network },
 ];
 
-const executiveMenuItems: MenuItem[] = [
-  { href: "/executive", label: "Executive", icon: Briefcase },
-  { href: "/reports", label: "Reports", icon: FileText },
-];
-
-const supervisorMenuItems: MenuItem[] = [
-  { href: "/supervisor", label: "Supervisor", icon: Users },
-  { href: "/fleet", label: "Fleet & Haulage", icon: Truck },
-  { href: "/earthworks", label: "Earthworks", icon: Mountain },
-  { href: "/safety", label: "Safety & CPS", icon: Shield },
-  { href: "/compliance", label: "Compliance", icon: ClipboardCheck },
-  { href: "/drones", label: "VTOL & Survey", icon: Camera },
-  { href: "/plant", label: "Plant & Tailings", icon: Factory },
-];
-
-const operatorMenuItems: MenuItem[] = [
-  { href: "/operator", label: "Operator", icon: User },
-];
-
-const getMenuItemsForRole = (pathname: string): MenuItem[] => {
-  if (pathname.startsWith('/executive')) return executiveMenuItems;
-  if (pathname.startsWith('/supervisor')) return supervisorMenuItems;
-  if (pathname.startsWith('/operator')) return operatorMenuItems;
-  // Default to admin/hub which shows all
-  return adminMenuItems;
-}
-
-
 export function AppSidebar() {
   const pathname = usePathname();
-  const menuItems = getMenuItemsForRole(pathname);
+  const menuItems = adminMenuItems; // Reverted to show all items always
 
   return (
     <Sidebar>
