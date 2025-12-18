@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,7 +25,7 @@ const roles: Role[] = [
     { title: "Smart Hub / Admin", description: "Full operational access", href: "/hub", icon: Home },
 ];
 
-const RoleButton = ({ role, onSelect }: { role: Role, onSelect: (role: Role) => void }) => {
+const RoleButton = memo(({ role, onSelect }: { role: Role, onSelect: (role: Role) => void }) => {
     return (
         <button
             onClick={() => onSelect(role)}
@@ -42,7 +42,9 @@ const RoleButton = ({ role, onSelect }: { role: Role, onSelect: (role: Role) => 
             </div>
         </button>
     );
-};
+});
+RoleButton.displayName = 'RoleButton';
+
 
 export default function LoginPage() {
     const router = useRouter();
