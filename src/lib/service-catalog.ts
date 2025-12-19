@@ -18,6 +18,18 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { StatusPillStatus } from "@/components/shared/status-pill";
+import { PeopleComplianceWidget } from "@/app/(dashboard)/hub/components/widgets/people-compliance-widget";
+import { SmartRiskWidget } from "@/app/(dashboard)/hub/components/widgets/smart-risk-widget";
+import { FleetWidget } from "@/app/(dashboard)/hub/components/widgets/fleet-widget";
+import { TransportWidget } from "@/app/(dashboard)/hub/components/widgets/transport-widget";
+import { SmartManagementWidget } from "@/app/(dashboard)/hub/components/widgets/smart-management-widget";
+import { BlastingWidget } from "@/app/(dashboard)/hub/components/widgets/blasting-widget";
+import { DrillWidget } from "@/app/(dashboard)/hub/components/widgets/drill-widget";
+import { StockpileWidget } from "@/app/(dashboard)/hub/components/widgets/stockpile-widget";
+import { EnergyWidget } from "@/app/(dashboard)/hub/components/widgets/energy-widget";
+import { EnvironmentalWidget } from "@/app/(dashboard)/hub/components/widgets/environmental-widget";
+import { PredictiveWidget } from "@/app/(dashboard)/hub/components/widgets/predictive-widget";
+import { SupplyChainWidget } from "@/app/(dashboard)/hub/components/widgets/supply-chain-widget";
 
 export type UserRole = "Operator" | "Supervisor" | "Executive" | "Admin";
 
@@ -31,6 +43,7 @@ export interface ServiceDefinition {
   kpis: { label: string; value: string; isAI?: boolean }[];
   enabled: boolean;
   rolesAllowed: UserRole[];
+  widget?: React.ComponentType;
 }
 
 export const serviceCatalog: ServiceDefinition[] = [
@@ -48,6 +61,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor", "Executive"],
+    widget: DrillWidget, // Example, can be a plant-specific widget
   },
   {
     id: "smart-transport",
@@ -63,6 +77,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor", "Operator"],
+    widget: TransportWidget,
   },
   {
     id: "smart-risk",
@@ -78,6 +93,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor", "Executive"],
+    widget: SmartRiskWidget,
   },
   {
     id: "smart-people",
@@ -93,6 +109,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor", "Executive", "Operator"],
+    widget: PeopleComplianceWidget,
   },
   {
     id: "smart-management",
@@ -108,6 +125,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Executive"],
+    widget: SmartManagementWidget,
   },
   {
     id: "smart-geotech",
@@ -123,6 +141,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor"],
+    widget: BlastingWidget, // Example
   },
   {
     id: "smart-survey",
@@ -138,6 +157,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor"],
+    widget: StockpileWidget,
   },
   {
     id: "smart-control",
@@ -153,6 +173,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor"],
+    widget: FleetWidget,
   },
   {
     id: "smart-network",
@@ -198,6 +219,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor"],
+    widget: PeopleComplianceWidget,
   },
   {
     id: "smart-loadout",
@@ -213,6 +235,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor", "Operator"],
+    widget: TransportWidget,
   },
   {
     id: "smart-energy",
@@ -228,6 +251,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Executive", "Supervisor"],
+    widget: EnergyWidget,
   },
   {
     id: "smart-environmental",
@@ -243,6 +267,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Executive"],
+    widget: EnvironmentalWidget,
   },
   {
     id: "smart-predictive",
@@ -258,6 +283,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Executive", "Supervisor"],
+    widget: PredictiveWidget,
   },
   {
     id: "smart-supply-chain",
@@ -269,9 +295,10 @@ export const serviceCatalog: ServiceDefinition[] = [
     kpis: [
       { label: "Inventory Levels", value: "Optimal" },
       { label: "Delivery ETA", value: "On Time" },
-      { label: "Stockout Risk", value: "Low" },
+      { label: "Stockout Risk", value: "Low", isAI: true },
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor"],
+    widget: SupplyChainWidget,
   },
 ];

@@ -1,29 +1,17 @@
 import { ModuleGrid } from "./components/module-grid";
 import { AiInsightsStrip } from "./components/ai-insights-strip";
-import { PeopleComplianceWidget } from "./components/widgets/people-compliance-widget";
-import { SmartRiskWidget } from "./components/widgets/smart-risk-widget";
-import { FleetWidget } from "./components/widgets/fleet-widget";
-import { TransportWidget } from "./components/widgets/transport-widget";
-import { SmartManagementWidget } from "./components/widgets/smart-management-widget";
-import { BlastingWidget } from "./components/widgets/blasting-widget";
-import { DrillWidget } from "./components/widgets/drill-widget";
-import { StockpileWidget } from "./components/widgets/stockpile-widget";
-
-import { UserRole } from "@/lib/service-catalog";
+import { UserRole, serviceCatalog } from "@/lib/service-catalog";
 
 // Mock data for demonstration purposes.
 // In a real app, this would come from user authentication.
 const MOCK_CURRENT_USER_ROLE: UserRole = "Admin"; 
 
-const roleWidgets: Record<UserRole, React.ComponentType[]> = {
-  "Admin": [PeopleComplianceWidget, SmartRiskWidget, FleetWidget, TransportWidget, SmartManagementWidget, BlastingWidget, DrillWidget, StockpileWidget],
-  "Supervisor": [PeopleComplianceWidget, SmartRiskWidget, FleetWidget, TransportWidget, BlastingWidget, DrillWidget, StockpileWidget],
-  "Executive": [SmartManagementWidget, SmartRiskWidget],
-  "Operator": [FleetWidget],
-};
-
 export default function HubPage() {
-  const widgets = roleWidgets[MOCK_CURRENT_USER_ROLE] || [];
+  const userVisibleServices = serviceCatalog.filter(service => 
+    service.enabled && 
+    service.widget &&
+    service.rolesAllowed.includes(MOCK_CURRENT_USER_ROLE)
+  );
 
   return (
     <div className="space-y-6">
@@ -32,11 +20,12 @@ export default function HubPage() {
         <p className="text-muted-foreground">Unified operational truth source for safer, smarter, and more efficient mining.</p>
       </header>
 
-      {widgets.length > 0 && (
+      {userVisibleServices.length > 0 && (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-          {widgets.map((Widget, index) => (
-            <Widget key={index} />
-          ))}
+          {userVisibleServices.map((service) => {
+            const Widget = service.widget!;
+            return <Widget key={service.id} />;
+          })}
         </section>
       )}
 
