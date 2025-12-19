@@ -1,9 +1,11 @@
+
 'use client';
 
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { DashboardWidget } from './dashboard-widget';
 import { Loader2 } from 'lucide-react';
+import { useMemo } from 'react';
 
 export function StockpileWidget() {
   const firestore = useFirestore();

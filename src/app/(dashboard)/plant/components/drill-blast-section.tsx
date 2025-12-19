@@ -1,3 +1,4 @@
+
 'use client';
 
 import { addDoc, collection } from 'firebase/firestore';
@@ -5,6 +6,7 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { DataCaptureForm } from '@/components/shared/data-capture-form';
 import { ModuleDataTable } from '@/components/shared/module-data-table';
 import { toast } from '@/hooks/use-toast';
+import { createAlert } from '@/lib/operational-engine';
 
 export function DrillAndBlastSection() {
   const firestore = useFirestore();
@@ -34,6 +36,16 @@ export function DrillAndBlastSection() {
       };
       await addDoc(collection(firestore, 'drillLogs'), docData);
       toast({ title: 'Success', description: 'Drill log added.' });
+      
+      if (docData.depth > 20) { // Example threshold for deep drill hole
+        await createAlert(firestore, {
+          moduleKey: 'plant',
+          severity: 'Warning',
+          description: `Unusually deep drill hole logged: ${docData.depth}m for hole ${docData.holeId}.`,
+        });
+        toast({ title: 'Alert Created', description: 'Deep drill hole alert triggered.' });
+      }
+
     } catch (e) {
       console.error(e);
       toast({ title: 'Error', description: 'Could not add drill log.', variant: 'destructive' });

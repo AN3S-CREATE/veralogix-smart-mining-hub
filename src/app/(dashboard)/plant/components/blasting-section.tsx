@@ -1,3 +1,4 @@
+
 'use client';
 
 import { addDoc, collection } from 'firebase/firestore';
@@ -5,6 +6,7 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { DataCaptureForm } from '@/components/shared/data-capture-form';
 import { ModuleDataTable } from '@/components/shared/module-data-table';
 import { toast } from '@/hooks/use-toast';
+import { createAlert } from '@/lib/operational-engine';
 
 export function BlastingSection() {
   const firestore = useFirestore();
@@ -34,6 +36,15 @@ export function BlastingSection() {
       };
       await addDoc(collection(firestore, 'blastDesigns'), docData);
       toast({ title: 'Success', description: 'Blast design added.' });
+
+      if (docData.powderFactor > 0.9) {
+        await createAlert(firestore, {
+          moduleKey: 'plant',
+          severity: 'High',
+          description: `High powder factor (${docData.powderFactor}) detected for blast ${docData.blastId}.`,
+        });
+        toast({ title: 'Alert Created', description: 'High powder factor alert triggered.' });
+      }
     } catch (e) {
       console.error(e);
       toast({ title: 'Error', description: 'Could not add blast design.', variant: 'destructive' });

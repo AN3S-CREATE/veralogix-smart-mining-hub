@@ -1,3 +1,4 @@
+
 'use client';
 
 import { addDoc, collection } from 'firebase/firestore';
@@ -5,6 +6,7 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { DataCaptureForm } from '@/components/shared/data-capture-form';
 import { ModuleDataTable } from '@/components/shared/module-data-table';
 import { toast } from '@/hooks/use-toast';
+import { createAlert } from '@/lib/operational-engine';
 
 export function StockpileManagementSection() {
   const firestore = useFirestore();
@@ -35,6 +37,16 @@ export function StockpileManagementSection() {
       };
       await addDoc(collection(firestore, 'stockpileVolumes'), docData);
       toast({ title: 'Success', description: 'Stockpile data added.' });
+      
+      if(docData.measuredTonnage > 50000) {
+        await createAlert(firestore, {
+            moduleKey: 'plant',
+            severity: 'Info',
+            description: `Large stockpile measured: ${docData.stockpileName} at ${docData.measuredTonnage} tonnes.`,
+        });
+        toast({ title: 'Info', description: 'Large stockpile measurement recorded.' });
+      }
+
     } catch (e) {
       console.error(e);
       toast({ title: 'Error', description: 'Could not add stockpile data.', variant: 'destructive' });

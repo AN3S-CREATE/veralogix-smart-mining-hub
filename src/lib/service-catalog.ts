@@ -17,6 +17,8 @@ import {
   BrainCircuit,
   Truck,
   type LucideIcon,
+  Container,
+  Mountain,
 } from "lucide-react";
 import type { StatusPillStatus } from "@/components/shared/status-pill";
 import { PeopleComplianceWidget } from "@/app/(dashboard)/hub/components/widgets/people-compliance-widget";
@@ -24,13 +26,13 @@ import { SmartRiskWidget } from "@/app/(dashboard)/hub/components/widgets/smart-
 import { FleetWidget } from "@/app/(dashboard)/hub/components/widgets/fleet-widget";
 import { TransportWidget } from "@/app/(dashboard)/hub/components/widgets/transport-widget";
 import { SmartManagementWidget } from "@/app/(dashboard)/hub/components/widgets/smart-management-widget";
-import { BlastingWidget } from "@/app/(dashboard)/hub/components/widgets/blasting-widget";
-import { DrillWidget } from "@/app/(dashboard)/hub/components/widgets/drill-widget";
-import { StockpileWidget } from "@/app/(dashboard)/hub/components/widgets/stockpile-widget";
 import { EnergyWidget } from "@/app/(dashboard)/hub/components/widgets/energy-widget";
 import { EnvironmentalWidget } from "@/app/(dashboard)/hub/components/widgets/environmental-widget";
 import { PredictiveWidget } from "@/app/(dashboard)/hub/components/widgets/predictive-widget";
 import { SupplyChainWidget } from "@/app/(dashboard)/hub/components/widgets/supply-chain-widget";
+import { BlastingWidget } from "@/app/(dashboard)/hub/components/widgets/blasting-widget";
+import { DrillWidget } from "@/app/(dashboard)/hub/components/widgets/drill-widget";
+import { StockpileWidget } from "@/app/(dashboard)/hub/components/widgets/stockpile-widget";
 
 export type UserRole = "Operator" | "Supervisor" | "Executive" | "Admin";
 
@@ -62,7 +64,31 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor", "Executive"],
-    widget: DrillWidget, // Example, can be a plant-specific widget
+    widget: DrillWidget,
+  },
+  {
+    id: "blasting",
+    title: "Blasting Optimization",
+    description: "Vibration monitoring and blast records.",
+    icon: Mountain,
+    href: "/plant",
+    status: "OK",
+    kpis: [],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor"],
+    widget: BlastingWidget,
+  },
+  {
+    id: "stockpiles",
+    title: "Stockpile Management",
+    description: "Survey volumes and quality segregation.",
+    icon: Container,
+    href: "/plant",
+    status: "OK",
+    kpis: [],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor"],
+    widget: StockpileWidget,
   },
   {
     id: "smart-transport",
