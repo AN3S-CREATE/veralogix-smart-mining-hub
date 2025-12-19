@@ -1,0 +1,110 @@
+{
+  "entities": {
+    "ComplianceItem": {
+      "title": "Compliance Item",
+      "description": "Represents a single compliance item for a person or asset.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["License", "Medical", "Training", "Induction"] },
+        "subject": { "type": "string", "description": "Person or asset ID" },
+        "expiryDate": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["Compliant", "Expiring Soon", "Expired"] }
+      },
+      "required": ["type", "subject", "status"]
+    },
+    "CapaAction": {
+      "title": "CAPA Action",
+      "description": "A Corrective and Preventive Action item.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["Open", "In Progress", "Closed"] }
+      },
+      "required": ["description", "dueDate", "status"]
+    },
+    "FleetInspection": {
+      "title": "Fleet Inspection",
+      "description": "Represents a scheduled or completed fleet inspection.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "assetId": { "type": "string" },
+        "inspectionType": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["Due", "Overdue", "Completed"] }
+      },
+      "required": ["assetId", "dueDate", "status"]
+    },
+    "DowntimeFlag": {
+      "title": "Downtime Flag",
+      "description": "A record of asset downtime.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "assetId": { "type": "string" },
+        "reason": { "type": "string" },
+        "startTime": { "type": "string", "format": "date-time" },
+        "endTime": { "type": "string", "format": "date-time" }
+      },
+      "required": ["assetId", "reason", "startTime"]
+    },
+    "LoadProof": {
+      "title": "Load Proof",
+      "description": "A record of a single haulage load.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "vehicleId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "payload": { "type": "number" },
+        "imageUrl": { "type": "string" }
+      },
+      "required": ["vehicleId", "timestamp", "payload"]
+    },
+    "ManagementKpi": {
+      "title": "Management KPI",
+      "description": "A high-level Key Performance Indicator for management.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "value": { "type": "string" },
+        "trend": { "type": "string", "enum": ["up", "down", "flat"] },
+        "period": { "type": "string", "enum": ["Weekly", "Monthly"] }
+      },
+      "required": ["title", "value", "trend", "period"]
+    }
+  },
+  "auth": {
+    "providers": ["anonymous"]
+  },
+  "firestore": {
+    "/complianceItems": {
+      "schema": { "$ref": "#/backend/entities/ComplianceItem" },
+      "description": "Collection of all compliance items."
+    },
+    "/capaActions": {
+      "schema": { "$ref": "#/backend/entities/CapaAction" },
+      "description": "Collection of all corrective and preventive actions."
+    },
+    "/fleetInspections": {
+      "schema": { "$ref": "#/backend/entities/FleetInspection" },
+      "description": "Collection of all fleet inspections."
+    },
+    "/downtimeFlags": {
+      "schema": { "$ref": "#/backend/entities/DowntimeFlag" },
+      "description": "Collection of all asset downtime flags."
+    },
+    "/loadProofs": {
+      "schema": { "$ref": "#/backend/entities/LoadProof" },
+      "description": "Collection of all load proofs."
+    },
+    "/managementKpis": {
+      "schema": { "$ref": "#/backend/entities/ManagementKpi" },
+      "description": "Collection of all management KPIs."
+    }
+  }
+}
