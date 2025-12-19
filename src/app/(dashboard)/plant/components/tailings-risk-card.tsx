@@ -42,7 +42,7 @@ export function TailingsRiskCard() {
         <div className="space-y-4">
             <div className="flex justify-between items-start">
                 <h4 className="font-medium">AI Tailings Risk Score</h4>
-                <Badge variant="outline" className="border-accent text-accent text-xs">Sentry-AI™</Badge>
+                <Badge variant="outline" className="border-accent text-accent text-xs">AI Insight</Badge>
             </div>
             <div className="relative">
                 <Progress value={riskScore} className="h-6" />

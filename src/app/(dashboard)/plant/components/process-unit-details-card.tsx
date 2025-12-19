@@ -64,7 +64,7 @@ export function ProcessUnitDetailsCard({ unit }: ProcessUnitDetailsCardProps) {
                  <CardHeader>
                     <div className="flex justify-between items-start">
                         <div>
-                            <CardTitle>Sentry-AI™ Process Insight</CardTitle>
+                            <CardTitle>AI Process Insight</CardTitle>
                             <CardDescription>AI-driven analysis for {unit.name}.</CardDescription>
                         </div>
                         <Badge variant="outline" className="border-accent text-accent text-xs">AI Insight</Badge>

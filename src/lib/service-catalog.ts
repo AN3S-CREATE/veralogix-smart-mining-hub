@@ -205,7 +205,7 @@ export const serviceCatalog: ServiceDefinition[] = [
   {
     id: "smart-network",
     title: "Smart Network",
-    description: "Monitor and manage Bioniq network infrastructure.",
+    description: "Monitor and manage network infrastructure.",
     icon: Network,
     href: "/network",
     status: "OK",
@@ -235,7 +235,7 @@ export const serviceCatalog: ServiceDefinition[] = [
   {
     id: "smart-access",
     title: "Smart Access",
-    description: "SentryMine™ access control and compliance.",
+    description: "Access control and compliance.",
     icon: ShieldCheck,
     href: "/compliance",
     status: "OK",

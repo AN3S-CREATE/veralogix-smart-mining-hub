@@ -1,3 +1,4 @@
+
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -47,7 +48,7 @@ export function FleetHealthExceptionsCard() {
         <div>
             <h4 className="text-sm font-medium">Carryback Estimate</h4>
             <p className="text-2xl font-bold font-headline">1.8 <span className="text-base text-muted-foreground font-sans">tonnes</span></p>
-            <p className="text-xs text-muted-foreground">Based on Loadscan® empty-load data.</p>
+            <p className="text-xs text-muted-foreground">Based on empty-load data.</p>
         </div>
 
         <Separator />

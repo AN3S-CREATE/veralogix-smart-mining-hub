@@ -10,6 +10,32 @@ This repository contains the source code for the Smart Hub, a full-stack web app
 
 ---
 
+## How to Set Up for Development
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Set Up Firebase Service Account
+To run the database seeder script, you need to provide admin credentials to Firebase.
+
+1.  Go to your [Firebase Project Settings](https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk).
+2.  Select your project, then click **"Generate new private key"**.
+3.  This will download a JSON file. **Save this file** in the root of this project directory with the name `service-account.json`.
+4.  **Important**: The `service-account.json` file is added to `.gitignore` and should never be committed to source control.
+
+### 3. Seed the Database with Demo Data
+Run the following command to populate your Firestore database with realistic demo data. This script is idempotent, meaning it's safe to run multiple times.
+
+```bash
+npm run db:seed
+```
+
+This will delete any previous demo data for the default tenant and create a fresh set.
+
+---
+
 ## How to Deploy (for a Stable, Shareable Link)
 
 This is a dynamic Next.js application and **cannot be hosted on GitHub Pages**. It must be deployed to a web hosting service that supports Node.js applications. This project is configured for **Firebase App Hosting**.
@@ -32,23 +58,6 @@ To deploy the application and get a permanent, shareable URL, you will need to u
     ```
 
 After deployment, the Firebase CLI will provide you with a stable URL where you and your bosses can access the live application.
-
----
-
-## The HUB, in 5 Pillars
-1.  **Smart Operations:** Plant performance, maintenance monitoring.
-2.  **Smart Transport:** Vehicle loading, tracking, and quality control.
-3.  **Smart Risk:** Automated risk management, hazard controls, and emergency response.
-4.  **Smart People:** Compliance, training, and linking operator performance to machines.
-5.  **Smart Management:** Automated reporting for the executive layer.
-
----
-
-## System Architecture (High Level)
-**Data Sources → Edge → Network → Platform → Dashboards**
-- **Vehicles:** Telemetry, fuel usage, speed, location, engine/brake/transmission metrics.
-- **Plant:** Data from crushers, conveyors, screens, feeders, thickeners.
-- **People:** Smart badge/attendance data, compliance status, and performance linkage.
 
 ---
 

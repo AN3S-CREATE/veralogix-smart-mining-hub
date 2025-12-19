@@ -1,10 +1,11 @@
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { StatusPill } from "@/components/shared/status-pill";
 
 const kpis = [
     { title: "Cost per Tonne (ZAR)", value: "R385.10", trend: "+2.5% vs target", status: "Warning" },
     { title: "Tonnes Moved (Shift/MTD)", value: "12.4k / 188k", trend: "On track", status: "OK" },
-    { title: "Haulage Uplift", value: "+8.1%", trend: "vs baseline (Loadscan)", status: "OK" },
+    { title: "Haulage Uplift", value: "+8.1%", trend: "vs baseline", status: "OK" },
     { title: "Safety Status", value: "Watch", trend: "1 new incident", status: "Warning" }
 ];
 

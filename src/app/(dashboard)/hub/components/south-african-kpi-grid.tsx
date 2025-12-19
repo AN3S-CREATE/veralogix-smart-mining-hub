@@ -1,3 +1,4 @@
+
 'use client';
 
 import { BarChart3, Fuel, Tractor, AlertOctagon } from "lucide-react";
@@ -67,11 +68,11 @@ export function SouthAfricanKpiGrid() {
         </CardContent>
       </Card>
 
-      {/* Haulage Penalty */}
+      {/* Haulage Cost: Rail vs Truck */}
       <Card className="card-hover">
         <CardHeader>
           <CardTitle className="text-base font-medium text-muted-foreground flex justify-between items-center">
-            Haulage Penalty: Rail vs Truck
+            Haulage Cost: Rail vs Truck
             <Tractor className="size-5 text-primary" />
           </CardTitle>
         </CardHeader>

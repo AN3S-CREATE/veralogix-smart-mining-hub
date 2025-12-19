@@ -71,7 +71,7 @@ export default function LoginPage() {
                     <Card className="w-full bg-[#1E1C1C]/80 backdrop-blur-sm border-[#4A4747] text-white overflow-hidden">
                         <CardContent className="p-6 lg:p-8 flex flex-col">
                              <div className="mx-auto mb-4">
-                                <img src="/veralogix-logo.png" alt="Veralogix Logo" width="240" />
+                                <img src="/veralogix-logo.png" alt="Company Logo" width="240" />
                             </div>
                             
                             <div className="w-full max-w-md mx-auto">
@@ -99,7 +99,7 @@ export default function LoginPage() {
                                         <form onSubmit={handleSignIn} className="space-y-2">
                                             <div className="space-y-1">
                                                 <Label htmlFor="email">Email</Label>
-                                                <Input id="email" type="email" placeholder="operator@veralogix.com" defaultValue="operator@veralogix.com" className="bg-[#252222] border-[#4A4747] text-white" />
+                                                <Input id="email" type="email" placeholder="operator@company.com" defaultValue="operator@company.com" className="bg-[#252222] border-[#4A4747] text-white" />
                                             </div>
                                             <div className="space-y-1">
                                                 <Label htmlFor="password">Password</Label>
@@ -115,7 +115,7 @@ export default function LoginPage() {
                         </CardContent>
                     </Card>
                     <div className="mx-auto mt-6 flex items-center justify-center gap-2">
-                        <p className="text-sm text-neutral-400">Powered by Veralogix</p>
+                        <p className="text-sm text-neutral-400">Powered by Smart Mining Hub</p>
                     </div>
                 </div>
             </main>
