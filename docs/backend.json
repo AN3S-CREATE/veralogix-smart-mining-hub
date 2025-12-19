@@ -76,6 +76,62 @@
         "period": { "type": "string", "enum": ["Weekly", "Monthly"] }
       },
       "required": ["title", "value", "trend", "period"]
+    },
+    "EnergyMetric": {
+      "title": "Energy Metric",
+      "description": "A record of energy consumption.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "site": { "type": "string" },
+        "metricName": { "type": "string" },
+        "value": { "type": "number" },
+        "unit": { "type": "string" }
+      },
+      "required": ["timestamp", "site", "metricName", "value", "unit"]
+    },
+    "EnvironmentalDataPoint": {
+      "title": "Environmental Data Point",
+      "description": "A record of an environmental metric.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "metricType": { "type": "string" },
+        "value": { "type": "number" },
+        "unit": { "type": "string" },
+        "complianceStatus": { "type": "string", "enum": ["Compliant", "Warning", "Breach"] }
+      },
+      "required": ["timestamp", "metricType", "value", "complianceStatus"]
+    },
+    "PredictiveModelOutput": {
+      "title": "Predictive Model Output",
+      "description": "An output from a predictive model.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "predictionDate": { "type": "string", "format": "date-time" },
+        "modelName": { "type": "string" },
+        "targetMetric": { "type": "string" },
+        "predictedValue": { "type": "number" },
+        "confidence": { "type": "number" }
+      },
+      "required": ["predictionDate", "modelName", "predictedValue"]
+    },
+    "InventoryItem": {
+      "title": "Inventory Item",
+      "description": "A single item in the supply chain inventory.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "itemName": { "type": "string" },
+        "quantity": { "type": "number" },
+        "location": { "type": "string" },
+        "reorderPoint": { "type": "number" },
+        "isCritical": { "type": "boolean" }
+      },
+      "required": ["itemName", "quantity", "location"]
     }
   },
   "auth": {
@@ -105,6 +161,22 @@
     "/managementKpis": {
       "schema": { "$ref": "#/backend/entities/ManagementKpi" },
       "description": "Collection of all management KPIs."
+    },
+    "/energyMetrics": {
+      "schema": { "$ref": "#/backend/entities/EnergyMetric" },
+      "description": "Collection of energy consumption metrics."
+    },
+    "/environmentalData": {
+      "schema": { "$ref": "#/backend/entities/EnvironmentalDataPoint" },
+      "description": "Collection of environmental data points."
+    },
+    "/predictiveOutputs": {
+      "schema": { "$ref": "#/backend/entities/PredictiveModelOutput" },
+      "description": "Collection of predictive model outputs."
+    },
+    "/inventoryItems": {
+      "schema": { "$ref": "#/backend/entities/InventoryItem" },
+      "description": "Collection of supply chain inventory items."
     }
   }
 }

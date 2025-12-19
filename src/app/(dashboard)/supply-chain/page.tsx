@@ -1,18 +1,84 @@
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+'use client';
+
+import { addDoc, collection } from 'firebase/firestore';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { ModulePageLayout } from '@/components/shared/module-page-layout';
+import { ModuleKpiGrid, type Kpi } from '@/components/shared/module-kpi-grid';
+import { DataCaptureForm } from '@/components/shared/data-capture-form';
+import { ModuleDataTable } from '@/components/shared/module-data-table';
+import { toast } from '@/hooks/use-toast';
 
 export default function SupplyChainPage() {
+  const firestore = useFirestore();
+
+  const inventoryQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'inventoryItems');
+  }, [firestore]);
+
+  const { data, loading, error } = useCollection(inventoryQuery);
+
+  const kpis: Kpi[] = [
+    { title: "Critical Spares On Hand", value: data ? `${data.filter(i => i.isCritical).length}` : '...' },
+    { title: "Stockout Risk", value: "Low", isAI: true },
+    { title: "Avg. Lead Time", value: "12 days" },
+    { title: "Orders in Transit", value: "8" },
+  ];
+
+  const columns = [
+    { accessorKey: 'itemName', header: 'Item' },
+    { accessorKey: 'quantity', header: 'Quantity' },
+    { accessorKey: 'location', header: 'Location' },
+    { accessorKey: 'reorderPoint', header: 'Reorder At' },
+  ];
+
+  const handleAddItem = async (formData: Record<string, any>) => {
+    if (!firestore) return;
+    try {
+      const docData = {
+        ...formData,
+        quantity: parseInt(formData.quantity, 10),
+        reorderPoint: parseInt(formData.reorderPoint, 10),
+        isCritical: formData.isCritical === 'true',
+      };
+      await addDoc(collection(firestore, 'inventoryItems'), docData);
+      toast({ title: 'Success', description: 'Inventory item added.' });
+    } catch (e) {
+      console.error(e);
+      toast({ title: 'Error', description: 'Could not add item.', variant: 'destructive' });
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      <header>
-        <h1 className="text-3xl font-headline font-semibold text-primary">Smart Supply Chain & Inventory</h1>
-        <p className="text-muted-foreground">Manage inventory, logistics, and supply chain.</p>
-      </header>
-      <Card>
-        <CardHeader>
-          <CardTitle>Supply Chain Dashboard</CardTitle>
-          <CardDescription>Placeholder for inventory levels, logistics tracking, and supply chain KPIs.</CardDescription>
-        </CardHeader>
-      </Card>
-    </div>
+    <ModulePageLayout
+      title="Smart Supply Chain & Inventory"
+      description="Manage inventory, logistics, and supply chain."
+    >
+      <ModuleKpiGrid kpis={kpis} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div className="lg:col-span-2">
+          <ModuleDataTable
+            title="Current Inventory"
+            description="Snapshot of key inventory items."
+            columns={columns}
+            data={data ?? []}
+            loading={loading}
+            error={error}
+          />
+        </div>
+        <DataCaptureForm
+          title="Add Inventory Item"
+          description="Manually add a new item to the inventory."
+          fields={[
+            { name: 'itemName', label: 'Item Name', placeholder: 'e.g., Crusher Bearing' },
+            { name: 'quantity', label: 'Quantity', type: 'number', placeholder: 'e.g., 10' },
+            { name: 'location', label: 'Location', placeholder: 'e.g., Warehouse A' },
+            { name: 'reorderPoint', label: 'Reorder Point', type: 'number', placeholder: 'e.g., 2' },
+            { name: 'isCritical', label: 'Is Critical?', placeholder: 'true/false' },
+          ]}
+          onSubmit={handleAddItem}
+        />
+      </div>
+    </ModulePageLayout>
   );
 }

@@ -1,18 +1,83 @@
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+'use client';
+
+import { addDoc, collection } from 'firebase/firestore';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { ModulePageLayout } from '@/components/shared/module-page-layout';
+import { ModuleKpiGrid, type Kpi } from '@/components/shared/module-kpi-grid';
+import { DataCaptureForm } from '@/components/shared/data-capture-form';
+import { ModuleDataTable } from '@/components/shared/module-data-table';
+import { toast } from '@/hooks/use-toast';
 
 export default function EnvironmentalPage() {
+  const firestore = useFirestore();
+
+  const envDataQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'environmentalData');
+  }, [firestore]);
+
+  const { data, loading, error } = useCollection(envDataQuery);
+
+  const kpis: Kpi[] = [
+    { title: "Dust Monitoring", value: "Compliant" },
+    { title: "Water Quality", value: "Compliant" },
+    { title: "CO₂ Index (MTD)", value: "97.5" },
+    { title: "Compliance Breaches (24h)", value: data ? `${data.filter(d => d.complianceStatus === 'Breach').length}` : '...' },
+  ];
+
+  const columns = [
+    { accessorKey: 'timestamp', header: 'Timestamp' },
+    { accessorKey: 'metricType', header: 'Metric Type' },
+    { accessorKey: 'value', header: 'Value' },
+    { accessorKey: 'unit', header: 'Unit' },
+    { accessorKey: 'complianceStatus', header: 'Status' },
+  ];
+
+  const handleAddDataPoint = async (formData: Record<string, any>) => {
+    if (!firestore) return;
+    try {
+      const docData = {
+        ...formData,
+        value: parseFloat(formData.value),
+        timestamp: new Date().toISOString(),
+      };
+      await addDoc(collection(firestore, 'environmentalData'), docData);
+      toast({ title: 'Success', description: 'Environmental data point added.' });
+    } catch (e) {
+      console.error(e);
+      toast({ title: 'Error', description: 'Could not add data point.', variant: 'destructive' });
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      <header>
-        <h1 className="text-3xl font-headline font-semibold text-primary">Smart Environmental Compliance</h1>
-        <p className="text-muted-foreground">Track emissions, water, and dust compliance.</p>
-      </header>
-      <Card>
-        <CardHeader>
-          <CardTitle>Environmental Compliance Dashboard</CardTitle>
-          <CardDescription>Placeholder for environmental KPIs, charts, and compliance data.</CardDescription>
-        </CardHeader>
-      </Card>
-    </div>
+    <ModulePageLayout
+      title="Smart Environmental Compliance"
+      description="Track emissions, water, and dust compliance."
+    >
+      <ModuleKpiGrid kpis={kpis} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div className="lg:col-span-2">
+          <ModuleDataTable
+            title="Recent Environmental Data"
+            description="Latest environmental readings and compliance status."
+            columns={columns}
+            data={data ?? []}
+            loading={loading}
+            error={error}
+          />
+        </div>
+        <DataCaptureForm
+          title="Add Environmental Data"
+          description="Manually capture a new environmental data point."
+          fields={[
+            { name: 'metricType', label: 'Metric Type', placeholder: 'e.g., Dust Level' },
+            { name: 'value', label: 'Value', type: 'number', placeholder: 'e.g., 45.5' },
+            { name: 'unit', label: 'Unit', placeholder: 'e.g., mg/m³' },
+            { name: 'complianceStatus', label: 'Status', placeholder: 'e.g., Compliant' },
+          ]}
+          onSubmit={handleAddDataPoint}
+        />
+      </div>
+    </ModulePageLayout>
   );
 }
