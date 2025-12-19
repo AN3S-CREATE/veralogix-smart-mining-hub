@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Home, FileText, Settings } from "lucide-react";
+import { Home, FileText, Settings, AlertTriangle, CheckSquare } from "lucide-react";
 import { serviceCatalog, type UserRole } from "@/lib/service-catalog";
 
 // Mock role for demonstration. In a real app, this would come from an auth hook.
@@ -31,6 +31,11 @@ export function AppSidebar() {
       // Find the first service that matches the href to get its details
       return userVisibleServices.find(s => s.href === href)!;
     });
+
+  const operationalItems = [
+    { href: "/alerts", label: "Alerts", icon: AlertTriangle },
+    { href: "/tasks", label: "Tasks", icon: CheckSquare },
+  ];
 
   const generalMenuItems = [
     { href: "/reports", label: "Reports", icon: FileText },
@@ -55,6 +60,29 @@ export function AppSidebar() {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+          
+          <SidebarSeparator />
+
+           <SidebarMenuItem>
+            <p className="px-4 py-2 text-xs font-semibold text-muted-foreground">Operational Engine</p>
+          </SidebarMenuItem>
+
+          {operationalItems.map((item) => (
+            <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton asChild isActive={pathname.startsWith(item.href)}>
+                <Link href={item.href}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+          
+          <SidebarSeparator />
+
+          <SidebarMenuItem>
+            <p className="px-4 py-2 text-xs font-semibold text-muted-foreground">Modules</p>
+          </SidebarMenuItem>
 
           {uniqueMenuLinks.map((item) => (
             <SidebarMenuItem key={item.href}>

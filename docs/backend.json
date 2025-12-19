@@ -1,5 +1,51 @@
 {
   "entities": {
+    "Alert": {
+      "title": "Alert",
+      "description": "Represents a system-generated alert requiring attention.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string", "description": "The ID of the tenant." },
+        "moduleKey": { "type": "string", "description": "The key of the module that generated the alert." },
+        "severity": { "type": "string", "enum": ["Low", "Medium", "High", "Critical"] },
+        "status": { "type": "string", "enum": ["New", "Acknowledged", "Resolved"] },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["tenantId", "moduleKey", "severity", "status", "description", "createdAt"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "Represents an actionable task for a user or system.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string", "description": "The ID of the tenant." },
+        "moduleKey": { "type": "string", "description": "The key of the module that generated the task." },
+        "taskType": { "type": "string", "enum": ["CAPA", "Inspection", "Pilot", "Maintenance"] },
+        "status": { "type": "string", "enum": ["Todo", "In Progress", "Done"] },
+        "description": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "assignee": { "type": "string", "description": "User or group ID" }
+      },
+      "required": ["tenantId", "moduleKey", "taskType", "status", "description"]
+    },
+    "ActivityFeedItem": {
+      "title": "Activity Feed Item",
+      "description": "An item in the global activity feed, like an audit log.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string", "description": "The ID of the tenant." },
+        "moduleKey": { "type": "string", "description": "The key of the module related to the activity." },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "user": { "type": "string", "description": "User ID who performed the action" },
+        "action": { "type": "string", "description": "A short description of the action taken." },
+        "details": { "type": "object", "description": "An object containing more details about the event." }
+      },
+      "required": ["tenantId", "timestamp", "user", "action"]
+    },
     "ComplianceItem": {
       "title": "Compliance Item",
       "description": "Represents a single compliance item for a person or asset.",
@@ -180,6 +226,18 @@
     "providers": ["anonymous"]
   },
   "firestore": {
+    "/alerts": {
+      "schema": { "$ref": "#/backend/entities/Alert" },
+      "description": "Collection of all system-wide alerts."
+    },
+    "/tasks": {
+      "schema": { "$ref": "#/backend/entities/Task" },
+      "description": "Collection of all actionable tasks."
+    },
+    "/activityFeed": {
+      "schema": { "$ref": "#/backend/entities/ActivityFeedItem" },
+      "description": "A global audit trail of system and user activities."
+    },
     "/complianceItems": {
       "schema": { "$ref": "#/backend/entities/ComplianceItem" },
       "description": "Collection of all compliance items."

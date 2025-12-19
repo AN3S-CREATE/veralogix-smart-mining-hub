@@ -1,6 +1,8 @@
+
 import { ModuleGrid } from "./components/module-grid";
 import { AiInsightsStrip } from "./components/ai-insights-strip";
 import { UserRole, serviceCatalog } from "@/lib/service-catalog";
+import { ActionCenterWidget } from "./components/widgets/action-center-widget";
 
 // Mock data for demonstration purposes.
 // In a real app, this would come from user authentication.
@@ -20,14 +22,13 @@ export default function HubPage() {
         <p className="text-muted-foreground">Unified operational truth source for safer, smarter, and more efficient mining.</p>
       </header>
 
-      {userVisibleServices.length > 0 && (
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-          {userVisibleServices.map((service) => {
-            const Widget = service.widget!;
-            return <Widget key={service.id} />;
-          })}
-        </section>
-      )}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
+        <ActionCenterWidget />
+        {userVisibleServices.map((service) => {
+          const Widget = service.widget!;
+          return <Widget key={service.id} />;
+        })}
+      </section>
 
       <section className="space-y-4">
         <h2 className="text-xl font-semibold text-primary/80">AI Insights</h2>
