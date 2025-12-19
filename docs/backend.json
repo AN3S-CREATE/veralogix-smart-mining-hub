@@ -191,7 +191,8 @@
         "modelName": { "type": "string" },
         "targetMetric": { "type": "string" },
         "predictedValue": { "type": "number" },
-        "confidence": { "type": "number" }
+        "confidence": { "type": "number" },
+        "drivers": { "type": "array", "items": { "type": "string" }, "description": "Top drivers influencing the prediction." }
       },
       "required": ["predictionDate", "modelName", "predictedValue"]
     },
