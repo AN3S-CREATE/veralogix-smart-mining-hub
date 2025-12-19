@@ -246,7 +246,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "Est. Tonnes Uplift", value: "+4%", isAI: true },
       { label: "Cost Reduction", value: "-2.5%", isAI: true },
     ],
-    enabled: false, // Example of a disabled service
+    enabled: true,
     rolesAllowed: ["Admin", "Executive"],
   },
   {
