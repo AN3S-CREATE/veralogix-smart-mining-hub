@@ -1,23 +1,31 @@
 
 'use client';
 
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Loader2 } from 'lucide-react';
-import { format, isValid } from 'date-fns';
+import { format, isValid, toDate } from 'date-fns';
+
+interface ColumnDef {
+  accessorKey: string;
+  header: string;
+  cell?: (props: { row: { original: any } }) => React.ReactNode;
+}
 
 interface ModuleDataTableProps {
   title: string;
   description: string;
-  columns: { accessorKey: string; header: string }[];
+  columns: ColumnDef[];
   data: any[];
   loading?: boolean;
   error?: Error | null;
 }
 
 function formatValue(key: string, value: any): string {
-    if ((key.toLowerCase().includes('date') || key.toLowerCase().includes('timestamp')) && value) {
-      const date = new Date(value);
+    if ((key.toLowerCase().includes('date') || key.toLowerCase().includes('timestamp') || key.toLowerCase().includes('at')) && value) {
+      // Handle Firebase Timestamps and ISO strings
+      const date = value.toDate ? value.toDate() : toDate(new Date(value));
       if (isValid(date)) {
         return format(date, 'PPP p');
       }
@@ -63,7 +71,7 @@ export function ModuleDataTable({ title, description, columns, data, loading, er
                   <TableRow key={row.id || index}>
                     {columns.map((col) => (
                       <TableCell key={col.accessorKey}>
-                        {formatValue(col.accessorKey, row[col.accessorKey])}
+                        {col.cell ? col.cell({ row: { original: row } }) : formatValue(col.accessorKey, row[col.accessorKey])}
                       </TableCell>
                     ))}
                   </TableRow>

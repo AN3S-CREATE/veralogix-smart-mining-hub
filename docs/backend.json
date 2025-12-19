@@ -221,6 +221,24 @@
         "surveyMethod": { "type": "string", "enum": ["Drone", "Manual", "Laser"] }
       },
       "required": ["stockpileName", "measuredTonnage", "surveyDate", "surveyMethod"]
+    },
+    "EvidenceFile": {
+        "title": "Evidence File",
+        "description": "A file uploaded as evidence, linked to another record.",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "tenantId": { "type": "string" },
+            "linkedType": { "type": "string", "description": "The type of entity this evidence is linked to (e.g., 'capa', 'environmental')." },
+            "linkedId": { "type": "string", "description": "The ID of the entity this evidence is linked to." },
+            "storagePath": { "type": "string", "description": "The path to the file in Firebase Storage." },
+            "fileName": { "type": "string" },
+            "fileType": { "type": "string" },
+            "fileSize": { "type": "number" },
+            "capturedAt": { "type": "string", "format": "date-time" },
+            "tags": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["tenantId", "linkedType", "linkedId", "storagePath", "fileName", "capturedAt"]
     }
   },
   "auth": {
@@ -290,6 +308,10 @@
     "/stockpileVolumes": {
       "schema": { "$ref": "#/backend/entities/StockpileVolume" },
       "description": "Collection of all stockpile volume measurements."
+    },
+    "/evidenceFiles": {
+        "schema": { "$ref": "#/backend/entities/EvidenceFile" },
+        "description": "Collection of all evidence files linked to other records."
     }
   }
 }

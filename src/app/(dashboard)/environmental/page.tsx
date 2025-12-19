@@ -10,6 +10,7 @@ import { ModuleDataTable } from '@/components/shared/module-data-table';
 import { toast } from '@/hooks/use-toast';
 import { createAlert } from '@/lib/operational-engine';
 import { useMemo } from 'react';
+import { EvidenceUploader } from '@/components/shared/evidence-uploader';
 
 export default function EnvironmentalPage() {
   const firestore = useFirestore();
@@ -34,6 +35,17 @@ export default function EnvironmentalPage() {
     { accessorKey: 'value', header: 'Value' },
     { accessorKey: 'unit', header: 'Unit' },
     { accessorKey: 'complianceStatus', header: 'Status' },
+    { 
+        accessorKey: 'actions', 
+        header: 'Evidence',
+        cell: ({ row }: { row: { original: { id: string } } }) => (
+            <EvidenceUploader 
+                linkedType="environmental" 
+                linkedId={row.original.id} 
+                variant="icon"
+            />
+        )
+    },
   ];
 
   const handleAddDataPoint = async (formData: Record<string, any>) => {

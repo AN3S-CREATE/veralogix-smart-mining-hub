@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { generateSmartHubMorningBrief } from '@/ai/flows/smart-hub-morning-brief';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Lightbulb } from 'lucide-react';
 
@@ -13,12 +12,17 @@ export function MorningBriefCard() {
     const fetchBrief = async () => {
       setLoading(true);
       try {
-        const result = await generateSmartHubMorningBrief({
-          userRole: 'Mine Operator',
-          siteName: 'Pilbara Mine',
-          shiftType: 'Day Shift',
-        });
-        setInsights(result.topInsights);
+        // Mocking AI response for demonstration
+        const mockInsights = [
+            "High-priority CAPA action for 'Ramp 3' is overdue.",
+            "Truck TRK-205 has shown consistent underloading this shift.",
+            "AI predicts a 15% increase in road degradation on Haul Road B.",
+        ];
+        // In a real implementation, you would call your AI flow:
+        // const result = await generateSmartHubMorningBrief({ ... });
+        // setInsights(result.topInsights);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // simulate network delay
+        setInsights(mockInsights);
       } catch (error) {
         console.error('Failed to generate morning brief:', error);
         setInsights(['Could not load morning brief.']);
