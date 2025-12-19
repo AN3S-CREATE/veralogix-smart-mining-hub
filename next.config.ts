@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ["*.google.com", "*.firebase.app", "*.cloud.run", "*.cloud.google.com", "localhost:6000", "6000-firebase-studio-1765529117518.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev"]
+      allowedOrigins: ["6000-firebase-studio-1765529117518.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev"]
     }
   },
 };

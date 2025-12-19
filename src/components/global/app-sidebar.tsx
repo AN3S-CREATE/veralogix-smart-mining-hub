@@ -25,6 +25,12 @@ import {
   FileText,
   Network,
   Factory,
+  BarChart3,
+  GitCommit,
+  Wind,
+  Cog,
+  ShieldAlert,
+  ScanLine,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -35,24 +41,25 @@ interface MenuItem {
 }
 
 const adminMenuItems: MenuItem[] = [
-  { href: "/hub", label: "Overview", icon: Home },
-  { href: "/operator", label: "Operator", icon: User },
-  { href: "/supervisor", label: "Supervisor", icon: Users },
-  { href: "/executive", label: "Executive", icon: Briefcase },
-  { href: "/fleet", label: "Fleet & Haulage", icon: Truck },
-  { href: "/earthworks", label: "Earthworks", icon: Mountain },
-  { href: "/safety", label: "Safety & CPS", icon: Shield },
-  { href: "/compliance", label: "Compliance", icon: ClipboardCheck },
-  { href: "/drones", label: "VTOL & Survey", icon: Camera },
-  { href: "/plant", label: "Plant & Tailings", icon: Factory },
-  { href: "/twin", label: "Digital Twin", icon: Layers },
-  { href: "/reports", label: "Reports", icon: FileText },
+  { href: "/hub", label: "Dashboard", icon: Home },
+  { href: "/smarthub", label: "Smart Hub", icon: ShieldCheck },
+  { href: "/executive", label: "Smart Management", icon: BarChart3 },
+  { href: "/supervisor", label: "Smart Control", icon: Cog },
+  { href: "/operator", label: "Smart People", icon: Users },
+  { href: "/safety", label: "Smart Risk", icon: ShieldAlert },
+  { href: "/fleet", label: "Smart Transport", icon: Truck },
+  { href: "/plant", label: "Smart Operations", icon: Factory },
+  { href: "/earthworks", label: "Smart Geotech", icon: GitCommit },
+  { href: "/drones", label: "Smart Survey", icon: Wind },
+  { href: "/network", label: "Smart Network", icon: Network },
+  { href: "/twin", label: "Smart Scenarios", icon: Layers },
   { href: "/sensors", label: "Sensor Stack", icon: Network },
+  { href: "/reports", label: "Reports", icon: FileText },
 ];
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const menuItems = adminMenuItems; // Reverted to show all items always
+  const menuItems = adminMenuItems; 
 
   return (
     <Sidebar>
