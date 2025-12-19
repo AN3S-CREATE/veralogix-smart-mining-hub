@@ -111,6 +111,35 @@
       },
       "required": ["vehicleId", "timestamp", "payload"]
     },
+    "LoadPassport": {
+        "title": "Load Passport",
+        "description": "Represents the entire lifecycle of a single haulage load.",
+        "type": "object",
+        "properties": {
+            "passportId": { "type": "string", "description": "Unique identifier for the load passport." },
+            "vehicleId": { "type": "string", "description": "ID of the vehicle carrying the load." },
+            "materialType": { "type": "string", "description": "Type of material being transported." },
+            "status": { "type": "string", "enum": ["In Progress", "Completed", "Exception"] },
+            "origin": { "type": "string", "description": "The starting point of the load." },
+            "destination": { "type": "string", "description": "The intended destination of the load." },
+            "createdAt": { "type": "string", "format": "date-time" },
+            "lastUpdatedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["passportId", "vehicleId", "materialType", "status", "origin", "destination", "createdAt"]
+    },
+    "LoadEvent": {
+        "title": "Load Event",
+        "description": "A single event in the timeline of a Load Passport.",
+        "type": "object",
+        "properties": {
+            "timestamp": { "type": "string", "format": "date-time" },
+            "eventType": { "type": "string", "enum": ["dispatch", "loadscan", "weighbridge", "route_update", "exception", "delivery"] },
+            "location": { "type": "string", "description": "Location where the event occurred." },
+            "summary": { "type": "string", "description": "A brief summary of the event." },
+            "details": { "type": "object", "description": "An object containing event-specific data (e.g., weight, speed, reason for exception)." }
+        },
+        "required": ["timestamp", "eventType", "summary"]
+    },
     "ManagementKpi": {
       "title": "Management KPI",
       "description": "A high-level Key Performance Indicator for management.",
@@ -276,6 +305,14 @@
     "/loadProofs": {
       "schema": { "$ref": "#/backend/entities/LoadProof" },
       "description": "Collection of all load proofs."
+    },
+    "/loadPassports": {
+        "schema": { "$ref": "#/backend/entities/LoadPassport" },
+        "description": "Collection of all load passports, tracking the lifecycle of a haulage load."
+    },
+    "/loadPassports/{passportId}/loadEvents": {
+        "schema": { "$ref": "#/backend/entities/LoadEvent" },
+        "description": "Subcollection of events for a specific load passport."
     },
     "/managementKpis": {
       "schema": { "$ref": "#/backend/entities/ManagementKpi" },

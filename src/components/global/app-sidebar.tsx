@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Home, FileText, Settings, AlertTriangle, CheckSquare } from "lucide-react";
+import { Home, FileText, Settings, AlertTriangle, CheckSquare, Package } from "lucide-react";
 import { serviceCatalog, type UserRole } from "@/lib/service-catalog";
 
 // Mock role for demonstration. In a real app, this would come from an auth hook.
@@ -35,6 +35,7 @@ export function AppSidebar() {
   const operationalItems = [
     { href: "/alerts", label: "Alerts", icon: AlertTriangle },
     { href: "/tasks", label: "Tasks", icon: CheckSquare },
+    { href: "/load-passports", label: "Load Passports", icon: Package },
   ];
 
   const generalMenuItems = [

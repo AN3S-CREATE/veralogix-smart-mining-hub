@@ -19,6 +19,7 @@ import {
   type LucideIcon,
   Container,
   Mountain,
+  Package,
 } from "lucide-react";
 import type { StatusPillStatus } from "@/components/shared/status-pill";
 import { PeopleComplianceWidget } from "@/app/(dashboard)/hub/components/widgets/people-compliance-widget";
@@ -33,6 +34,7 @@ import { SupplyChainWidget } from "@/app/(dashboard)/hub/components/widgets/supp
 import { BlastingWidget } from "@/app/(dashboard)/hub/components/widgets/blasting-widget";
 import { DrillWidget } from "@/app/(dashboard)/hub/components/widgets/drill-widget";
 import { StockpileWidget } from "@/app/(dashboard)/hub/components/widgets/stockpile-widget";
+import { LoadPassportWidget } from "@/app/(dashboard)/hub/components/widgets/load-passport-widget";
 
 export type UserRole = "Operator" | "Supervisor" | "Executive" | "Admin";
 
@@ -105,6 +107,21 @@ export const serviceCatalog: ServiceDefinition[] = [
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor", "Operator"],
     widget: TransportWidget,
+  },
+   {
+    id: "load-passports",
+    title: "Load Passports",
+    description: "Lifecycle tracking for every haulage load.",
+    icon: Package,
+    href: "/load-passports",
+    status: "OK",
+    kpis: [
+      { label: "Loads Today", value: "152" },
+      { label: "Active Exceptions", value: "1" },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor"],
+    widget: LoadPassportWidget,
   },
   {
     id: "smart-risk",

@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview This script seeds the Firestore database with realistic demo data for a specific tenant.
  * It is idempotent, meaning it can be run multiple times without creating duplicate data.
@@ -9,7 +10,7 @@
 
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
-import { addDays, subDays, formatISO } from 'date-fns';
+import { addDays, subDays, formatISO, addHours, subMinutes } from 'date-fns';
 
 // --- Configuration ---
 // This is the tenant ID for which the data will be generated.
@@ -58,6 +59,36 @@ async function clearCollection(collectionName: string) {
 }
 
 /**
+ * Deletes all subcollections within a collection for a specific tenantId.
+ * @param parentCollectionName The name of the parent collection.
+ * @param subCollectionName The name of the subcollection to clear.
+ */
+async function clearSubCollections(parentCollectionName: string, subCollectionName: string) {
+  console.log(`Clearing subcollection: ${subCollectionName} in ${parentCollectionName} for tenant: ${DEMO_TENANT_ID}`);
+  const parentCollectionRef = db.collection(parentCollectionName);
+  const q = parentCollectionRef.where('tenantId', '==', DEMO_TENANT_ID);
+  const parentSnapshot = await q.get();
+
+  if (parentSnapshot.empty) {
+    console.log(`No parent documents found in ${parentCollectionName}.`);
+    return;
+  }
+
+  for (const doc of parentSnapshot.docs) {
+    const subCollectionRef = doc.ref.collection(subCollectionName);
+    const snapshot = await subCollectionRef.get();
+    if (!snapshot.empty) {
+      const batch = db.batch();
+      snapshot.docs.forEach(subDoc => {
+        batch.delete(subDoc.ref);
+      });
+      await batch.commit();
+      console.log(`Deleted ${snapshot.size} documents from ${subCollectionName} in doc ${doc.id}.`);
+    }
+  }
+}
+
+/**
  * Seeds a collection with the given data.
  * @param collectionName The name of the collection to seed.
  * @param data An array of documents to add to the collection.
@@ -75,6 +106,45 @@ async function seedCollection(collectionName: string, data: any[]) {
   await batch.commit();
   console.log(`Seeded ${data.length} documents into ${collectionName}.`);
 }
+
+
+/**
+ * Seeds load passport data, including nested events.
+ */
+async function seedLoadPassports() {
+    const passports = generateLoadPassports();
+    console.log(`Seeding collection: loadPassports with ${passports.length} documents.`);
+
+    for (const passport of passports) {
+        const { events, ...passportData } = passport;
+        const passportRef = db.collection('loadPassports').doc(passportData.passportId);
+        await passportRef.set({ ...passportData, tenantId: DEMO_TENANT_ID });
+
+        const eventsRef = passportRef.collection('loadEvents');
+        const batch = db.batch();
+        events.forEach(event => {
+            const eventRef = eventsRef.doc();
+            batch.set(eventRef, event);
+        });
+        await batch.commit();
+
+        // Also create alerts for exceptions
+        for (const event of events) {
+            if (event.eventType === 'exception') {
+                await db.collection('alerts').add({
+                    tenantId: DEMO_TENANT_ID,
+                    moduleKey: 'load-passport',
+                    severity: event.details.severity || 'Warning',
+                    status: 'New',
+                    description: `Load Passport ${passportData.passportId}: ${event.summary}`,
+                    createdAt: event.timestamp,
+                });
+            }
+        }
+    }
+    console.log(`Seeded ${passports.length} load passports and their events.`);
+}
+
 
 // --- Data Generators ---
 
@@ -137,6 +207,57 @@ function generateEnergyAndEnvironmentalData() {
     return { energy, environmental };
 }
 
+function generateLoadPassports() {
+    const now = new Date();
+    return [
+        {
+            passportId: 'LP-240719-001',
+            vehicleId: 'TRK-203',
+            materialType: 'High-Grade Ore',
+            status: 'In Progress',
+            origin: 'Shovel 2',
+            destination: 'ROM Pad A',
+            createdAt: formatISO(subMinutes(now, 45)),
+            lastUpdatedAt: formatISO(subMinutes(now, 5)),
+            events: [
+                { eventType: 'dispatch', summary: 'Dispatched to Shovel 2', location: 'Control Room', timestamp: formatISO(subMinutes(now, 45)), details: {} },
+                { eventType: 'loadscan', summary: 'Loaded 65.2t of High-Grade Ore', location: 'Shovel 2', timestamp: formatISO(subMinutes(now, 30)), details: { payload: 65.2 } },
+                { eventType: 'route_update', summary: 'Route to ROM Pad A confirmed', location: 'On Route', timestamp: formatISO(subMinutes(now, 28)), details: {} },
+            ],
+        },
+        {
+            passportId: 'LP-240719-002',
+            vehicleId: 'TRK-310',
+            materialType: 'Waste Rock',
+            status: 'Exception',
+            origin: 'Shovel 1',
+            destination: 'West Dump',
+            createdAt: formatISO(subMinutes(now, 65)),
+            lastUpdatedAt: formatISO(subMinutes(now, 15)),
+            events: [
+                { eventType: 'dispatch', summary: 'Dispatched to Shovel 1', location: 'Control Room', timestamp: formatISO(subMinutes(now, 65)), details: {} },
+                { eventType: 'loadscan', summary: 'Loaded 68.9t of Waste Rock', location: 'Shovel 1', timestamp: formatISO(subMinutes(now, 50)), details: { payload: 68.9 } },
+                { eventType: 'exception', summary: 'Overload detected at weighbridge', location: 'Weighbridge 1', timestamp: formatISO(subMinutes(now, 15)), details: { severity: 'High', expected: 65, actual: 68.9 } },
+            ],
+        },
+        {
+            passportId: 'LP-240719-003',
+            vehicleId: 'TRK-205',
+            materialType: 'Low-Grade Ore',
+            status: 'Completed',
+            origin: 'Shovel 3',
+            destination: 'ROM Pad B',
+            createdAt: formatISO(subHours(now, 2)),
+            lastUpdatedAt: formatISO(subHours(now, 1)),
+            events: [
+                { eventType: 'dispatch', summary: 'Dispatched to Shovel 3', location: 'Control Room', timestamp: formatISO(subHours(now, 2)), details: {} },
+                { eventType: 'loadscan', summary: 'Loaded 63.1t of Low-Grade Ore', location: 'Shovel 3', timestamp: formatISO(subMinutes(now, 105)), details: { payload: 63.1 } },
+                { eventType: 'weighbridge', summary: 'Weight confirmed: 63.0t', location: 'Weighbridge 2', timestamp: formatISO(subMinutes(now, 75)), details: { weight: 63.0 } },
+                { eventType: 'delivery', summary: 'Delivered to ROM Pad B', location: 'ROM Pad B', timestamp: formatISO(subHours(now, 1)), details: {} },
+            ],
+        },
+    ];
+}
 
 // --- Main Execution ---
 
@@ -151,6 +272,9 @@ async function main() {
     await clearCollection('inventoryItems');
     await clearCollection('energyMetrics');
     await clearCollection('environmentalData');
+    await clearSubCollections('loadPassports', 'loadEvents');
+    await clearCollection('loadPassports');
+    await clearCollection('alerts'); // Clear alerts to avoid keeping old exception alerts
     
     // Generate new data
     const complianceItems = generateComplianceItems();
@@ -166,6 +290,7 @@ async function main() {
     await seedCollection('inventoryItems', inventoryItems);
     await seedCollection('energyMetrics', energy);
     await seedCollection('environmentalData', environmental);
+    await seedLoadPassports();
 
     console.log('\n✅ Database seeding completed successfully!');
   } catch (error) {
