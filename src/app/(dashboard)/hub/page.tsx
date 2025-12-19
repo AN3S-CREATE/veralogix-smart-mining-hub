@@ -5,6 +5,10 @@ import { SmartRiskWidget } from "./components/widgets/smart-risk-widget";
 import { FleetWidget } from "./components/widgets/fleet-widget";
 import { TransportWidget } from "./components/widgets/transport-widget";
 import { SmartManagementWidget } from "./components/widgets/smart-management-widget";
+import { BlastingWidget } from "./components/widgets/blasting-widget";
+import { DrillWidget } from "./components/widgets/drill-widget";
+import { StockpileWidget } from "./components/widgets/stockpile-widget";
+
 import { UserRole } from "@/lib/service-catalog";
 
 // Mock data for demonstration purposes.
@@ -12,8 +16,8 @@ import { UserRole } from "@/lib/service-catalog";
 const MOCK_CURRENT_USER_ROLE: UserRole = "Admin"; 
 
 const roleWidgets: Record<UserRole, React.ComponentType[]> = {
-  "Admin": [PeopleComplianceWidget, SmartRiskWidget, FleetWidget, TransportWidget, SmartManagementWidget],
-  "Supervisor": [PeopleComplianceWidget, SmartRiskWidget, FleetWidget, TransportWidget],
+  "Admin": [PeopleComplianceWidget, SmartRiskWidget, FleetWidget, TransportWidget, SmartManagementWidget, BlastingWidget, DrillWidget, StockpileWidget],
+  "Supervisor": [PeopleComplianceWidget, SmartRiskWidget, FleetWidget, TransportWidget, BlastingWidget, DrillWidget, StockpileWidget],
   "Executive": [SmartManagementWidget, SmartRiskWidget],
   "Operator": [FleetWidget],
 };

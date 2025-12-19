@@ -132,6 +132,48 @@
         "isCritical": { "type": "boolean" }
       },
       "required": ["itemName", "quantity", "location"]
+    },
+     "BlastDesign": {
+      "title": "Blast Design",
+      "description": "A design for a mining blast operation.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "blastId": { "type": "string" },
+        "location": { "type": "string" },
+        "designDate": { "type": "string", "format": "date-time" },
+        "powderFactor": { "type": "number" },
+        "status": { "type": "string", "enum": ["Designed", "Drilled", "Charged", "Fired"] }
+      },
+      "required": ["blastId", "location", "designDate", "status"]
+    },
+    "DrillLog": {
+      "title": "Drill Log",
+      "description": "A log of a single drill hole for a blast.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "holeId": { "type": "string" },
+        "blastId": { "type": "string" },
+        "depth": { "type": "number" },
+        "location": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["holeId", "blastId", "depth", "timestamp"]
+    },
+    "StockpileVolume": {
+      "title": "Stockpile Volume",
+      "description": "A measurement of a stockpile's volume and tonnage.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "stockpileName": { "type": "string" },
+        "measuredVolume": { "type": "number", "description": "Volume in cubic meters" },
+        "measuredTonnage": { "type": "number", "description": "Tonnage in metric tons" },
+        "surveyDate": { "type": "string", "format": "date-time" },
+        "surveyMethod": { "type": "string", "enum": ["Drone", "Manual", "Laser"] }
+      },
+      "required": ["stockpileName", "measuredTonnage", "surveyDate", "surveyMethod"]
     }
   },
   "auth": {
@@ -177,6 +219,18 @@
     "/inventoryItems": {
       "schema": { "$ref": "#/backend/entities/InventoryItem" },
       "description": "Collection of supply chain inventory items."
+    },
+    "/blastDesigns": {
+      "schema": { "$ref": "#/backend/entities/BlastDesign" },
+      "description": "Collection of all blast designs."
+    },
+    "/drillLogs": {
+      "schema": { "$ref": "#/backend/entities/DrillLog" },
+      "description": "Collection of all drill logs."
+    },
+    "/stockpileVolumes": {
+      "schema": { "$ref": "#/backend/entities/StockpileVolume" },
+      "description": "Collection of all stockpile volume measurements."
     }
   }
 }
