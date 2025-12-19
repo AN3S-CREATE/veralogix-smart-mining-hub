@@ -1,3 +1,4 @@
+
 'use client';
 
 import { addDoc, collection } from 'firebase/firestore';
@@ -7,6 +8,8 @@ import { ModuleKpiGrid, type Kpi } from '@/components/shared/module-kpi-grid';
 import { DataCaptureForm } from '@/components/shared/data-capture-form';
 import { ModuleDataTable } from '@/components/shared/module-data-table';
 import { toast } from '@/hooks/use-toast';
+import { createAlert } from '@/lib/operational-engine';
+import { useMemo } from 'react';
 
 export default function PredictiveAnalyticsPage() {
   const firestore = useFirestore();
@@ -18,12 +21,12 @@ export default function PredictiveAnalyticsPage() {
 
   const { data, loading, error } = useCollection(predictionsQuery);
 
-  const kpis: Kpi[] = [
+  const kpis: Kpi[] = useMemo(() => [
     { title: "Failure Prediction Acc.", value: "92%", isAI: true },
     { title: "Production Forecast (24h)", value: "+2.5%", isAI: true },
     { title: "Safety Risk Index", value: "28/100", isAI: true },
     { title: "Models in Production", value: "12" },
-  ];
+  ], []);
 
   const columns = [
     { accessorKey: 'predictionDate', header: 'Date' },
@@ -44,6 +47,15 @@ export default function PredictiveAnalyticsPage() {
       };
       await addDoc(collection(firestore, 'predictiveOutputs'), docData);
       toast({ title: 'Success', description: 'Predictive model output added.' });
+
+      if (docData.targetMetric.toLowerCase().includes('failure') && docData.confidence > 0.9) {
+         await createAlert(firestore, {
+          moduleKey: 'predictive',
+          severity: 'High',
+          description: `High-confidence failure prediction from model ${docData.modelName}.`,
+        });
+        toast({ title: 'Alert Created', description: 'Failure prediction alert has been triggered.' });
+      }
     } catch (e) {
       console.error(e);
       toast({ title: 'Error', description: 'Could not add prediction.', variant: 'destructive' });

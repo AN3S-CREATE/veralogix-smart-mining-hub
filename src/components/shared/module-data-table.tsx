@@ -1,9 +1,10 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 
 interface ModuleDataTableProps {
   title: string;
@@ -15,17 +16,19 @@ interface ModuleDataTableProps {
 }
 
 function formatValue(key: string, value: any): string {
-    if (key === 'timestamp' || key === 'predictionDate') {
-      try {
-        return format(new Date(value), 'PPP p');
-      } catch {
-        return String(value);
+    if ((key.toLowerCase().includes('date') || key.toLowerCase().includes('timestamp')) && value) {
+      const date = new Date(value);
+      if (isValid(date)) {
+        return format(date, 'PPP p');
       }
     }
     if (typeof value === 'number') {
         return value.toLocaleString();
     }
-    return String(value);
+    if (typeof value === 'boolean') {
+        return value ? 'Yes' : 'No';
+    }
+    return String(value ?? '');
 }
 
 export function ModuleDataTable({ title, description, columns, data, loading, error }: ModuleDataTableProps) {
@@ -48,24 +51,26 @@ export function ModuleDataTable({ title, description, columns, data, loading, er
           </div>
         )}
         {!loading && !error && data.length > 0 && (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {columns.map((col) => <TableHead key={col.accessorKey}>{col.header}</TableHead>)}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((row) => (
-                <TableRow key={row.id}>
-                  {columns.map((col) => (
-                    <TableCell key={col.accessorKey}>
-                      {formatValue(col.accessorKey, row[col.accessorKey])}
-                    </TableCell>
-                  ))}
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {columns.map((col) => <TableHead key={col.accessorKey}>{col.header}</TableHead>)}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {data.map((row, index) => (
+                  <TableRow key={row.id || index}>
+                    {columns.map((col) => (
+                      <TableCell key={col.accessorKey}>
+                        {formatValue(col.accessorKey, row[col.accessorKey])}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </CardContent>
     </Card>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { addDoc, collection } from 'firebase/firestore';
@@ -7,6 +8,8 @@ import { ModuleKpiGrid, type Kpi } from '@/components/shared/module-kpi-grid';
 import { DataCaptureForm } from '@/components/shared/data-capture-form';
 import { ModuleDataTable } from '@/components/shared/module-data-table';
 import { toast } from '@/hooks/use-toast';
+import { createAlert } from '@/lib/operational-engine';
+import { useMemo } from 'react';
 
 export default function EnergyPage() {
   const firestore = useFirestore();
@@ -18,12 +21,12 @@ export default function EnergyPage() {
 
   const { data: metrics, loading, error } = useCollection(energyMetricsQuery);
 
-  const kpis: Kpi[] = [
+  const kpis: Kpi[] = useMemo(() => [
     { title: "Total Consumption (24h)", value: metrics ? `${(metrics.reduce((acc, m) => acc + (m.value || 0), 0) / 1000).toFixed(1)} MWh` : '...' },
-    { title: "Avg. Cost per kWh", value: metrics ? "ZAR 2.15" : '...' },
+    { title: "Avg. Cost per kWh", value: "ZAR 2.15" },
     { title: "Active AI Savings", value: "3.2%", isAI: true },
     { title: "Grid Stability", value: "99.8%" },
-  ];
+  ], [metrics]);
 
   const columns = [
     { accessorKey: 'timestamp', header: 'Timestamp' },
@@ -43,6 +46,15 @@ export default function EnergyPage() {
       };
       await addDoc(collection(firestore, 'energyMetrics'), docData);
       toast({ title: 'Success', description: 'Energy metric added.' });
+      
+      if (parseFloat(data.value) > 1000) { // Example condition for an alert
+        await createAlert(firestore, {
+          moduleKey: 'energy',
+          severity: 'High',
+          description: `High energy consumption detected: ${data.value} ${data.unit} at ${data.site}`,
+        });
+        toast({ title: 'Alert Created', description: 'High energy consumption alert triggered.' });
+      }
     } catch (e) {
       console.error(e);
       toast({ title: 'Error', description: 'Could not add metric.', variant: 'destructive' });

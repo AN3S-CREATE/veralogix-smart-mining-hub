@@ -1,3 +1,4 @@
+
 'use client';
 
 import { addDoc, collection } from 'firebase/firestore';
@@ -7,6 +8,8 @@ import { ModuleKpiGrid, type Kpi } from '@/components/shared/module-kpi-grid';
 import { DataCaptureForm } from '@/components/shared/data-capture-form';
 import { ModuleDataTable } from '@/components/shared/module-data-table';
 import { toast } from '@/hooks/use-toast';
+import { createAlert } from '@/lib/operational-engine';
+import { useMemo } from 'react';
 
 export default function EnvironmentalPage() {
   const firestore = useFirestore();
@@ -18,12 +21,12 @@ export default function EnvironmentalPage() {
 
   const { data, loading, error } = useCollection(envDataQuery);
 
-  const kpis: Kpi[] = [
+  const kpis: Kpi[] = useMemo(() => [
     { title: "Dust Monitoring", value: "Compliant" },
     { title: "Water Quality", value: "Compliant" },
     { title: "CO₂ Index (MTD)", value: "97.5" },
     { title: "Compliance Breaches (24h)", value: data ? `${data.filter(d => d.complianceStatus === 'Breach').length}` : '...' },
-  ];
+  ], [data]);
 
   const columns = [
     { accessorKey: 'timestamp', header: 'Timestamp' },
@@ -43,6 +46,16 @@ export default function EnvironmentalPage() {
       };
       await addDoc(collection(firestore, 'environmentalData'), docData);
       toast({ title: 'Success', description: 'Environmental data point added.' });
+
+      if (docData.complianceStatus === 'Breach') {
+        await createAlert(firestore, {
+          moduleKey: 'environmental',
+          severity: 'Critical',
+          description: `Compliance breach: ${docData.metricType} at ${docData.value} ${docData.unit}`,
+        });
+        toast({ title: 'Alert Created', description: 'Compliance breach alert has been triggered.' });
+      }
+
     } catch (e) {
       console.error(e);
       toast({ title: 'Error', description: 'Could not add data point.', variant: 'destructive' });
