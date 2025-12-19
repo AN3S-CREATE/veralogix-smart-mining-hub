@@ -1,0 +1,214 @@
+
+import {
+  GitCommit,
+  Car,
+  ShieldAlert,
+  Users,
+  BarChart3,
+  Wind,
+  Cog,
+  Network,
+  Layers,
+  Factory,
+  ShieldCheck,
+  ScanLine,
+  type LucideIcon,
+} from "lucide-react";
+import type { StatusPillStatus } from "@/components/shared/status-pill";
+
+export type UserRole = "Operator" | "Supervisor" | "Executive" | "Admin";
+
+export interface ServiceDefinition {
+  id: string;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  href: string;
+  status: StatusPillStatus;
+  kpis: { label: string; value: string; isAI?: boolean }[];
+  enabled: boolean;
+  rolesAllowed: UserRole[];
+}
+
+export const serviceCatalog: ServiceDefinition[] = [
+  {
+    id: "smart-operations",
+    title: "Smart Operations",
+    description: "Plant performance & maintenance monitoring.",
+    icon: Factory,
+    href: "/plant",
+    status: "OK",
+    kpis: [
+      { label: "Plant Throughput", value: "850 t/h" },
+      { label: "Recovery / Yield", value: "91.3%" },
+      { label: "AI Risk Score", value: "58/100", isAI: true },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor", "Executive"],
+  },
+  {
+    id: "smart-transport",
+    title: "Smart Transport",
+    description: "Vehicle loading, tracking, and quality control.",
+    icon: Car,
+    href: "/fleet",
+    status: "Warning",
+    kpis: [
+      { label: "Avg Payload/Rated", value: "98.2%" },
+      { label: "Uplift vs Plan (ZAR)", value: "R85k", isAI: true },
+      { label: "Total Idle Hours", value: "112 h" },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor", "Operator"],
+  },
+  {
+    id: "smart-risk",
+    title: "Smart Risk",
+    description: "Automated risk, hazards, and emergency response.",
+    icon: ShieldAlert,
+    href: "/safety",
+    status: "OK",
+    kpis: [
+      { label: "Near-Miss Events (7d)", value: "18" },
+      { label: "AI Hotspot Risk", value: "72/100", isAI: true },
+      { label: "CPS Interventions", value: "4" },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor", "Executive"],
+  },
+  {
+    id: "smart-people",
+    title: "Smart People",
+    description: "Compliance, training, and operator performance.",
+    icon: Users,
+    href: "/compliance",
+    status: "OK",
+    kpis: [
+      { label: "Compliance %", value: "98.7%" },
+      { label: "Blocked entries (MTD)", value: "42" },
+      { label: "DMRE Audit Readiness", value: "95%", isAI: true },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor", "Executive", "Operator"],
+  },
+  {
+    id: "smart-management",
+    title: "Smart Management",
+    description: "Automated reporting for the executive layer.",
+    icon: BarChart3,
+    href: "/executive",
+    status: "OK",
+    kpis: [
+      { label: "Cost per Tonne", value: "R385.10" },
+      { label: "Tonnes Moved (MTD)", value: "188k" },
+      { label: "Haulage Uplift", value: "+8.1%" },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Executive"],
+  },
+  {
+    id: "smart-geotech",
+    title: "Smart Geotech",
+    description: "High-precision grade control and site management.",
+    icon: GitCommit,
+    href: "/earthworks",
+    status: "OK",
+    kpis: [
+      { label: "Haul roads in spec", value: "92%" },
+      { label: "Rework hours (WTD)", value: "28.5" },
+      { label: "AI Road Risk Index", value: "42/100", isAI: true },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor"],
+  },
+  {
+    id: "smart-survey",
+    title: "Smart Survey",
+    description: "Aerial surveys, stockpile measurement, and security.",
+    icon: Wind,
+    href: "/drones",
+    status: "Critical",
+    kpis: [
+      { label: "Missions flown (WTD)", value: "12/20" },
+      { label: "Stockpile Variance", value: "-1.5%", isAI: true },
+      { label: "Perimeter coverage", value: "78%" },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor"],
+  },
+  {
+    id: "smart-control",
+    title: "Smart Control",
+    description: "Real-time fleet and process optimization.",
+    icon: Cog,
+    href: "/supervisor",
+    status: "OK",
+    kpis: [
+      { label: "Avg Cycle Time", value: "34.2 min" },
+      { label: "Avg Queue Time", value: "4.8 min" },
+      { label: "AI Anomalies", value: "3", isAI: true },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor"],
+  },
+  {
+    id: "smart-network",
+    title: "Smart Network",
+    description: "Monitor and manage Bioniq network infrastructure.",
+    icon: Network,
+    href: "/network",
+    status: "OK",
+    kpis: [
+      { label: "Network Health", value: "Online" },
+      { label: "Data Throughput", value: "98%" },
+      { label: "Connected Devices", value: "215" },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin"],
+  },
+  {
+    id: "smart-scenarios",
+    title: "Smart Scenarios",
+    description: "Digital twin for simulating operational changes.",
+    icon: Layers,
+    href: "/twin",
+    status: "OK",
+    kpis: [
+      { label: "Active Scenarios", value: "3" },
+      { label: "Est. Tonnes Uplift", value: "+4%", isAI: true },
+      { label: "Cost Reduction", value: "-2.5%", isAI: true },
+    ],
+    enabled: false, // Example of a disabled service
+    rolesAllowed: ["Admin", "Executive"],
+  },
+  {
+    id: "smart-access",
+    title: "Smart Access",
+    description: "SentryMine™ access control and compliance.",
+    icon: ShieldCheck,
+    href: "/compliance",
+    status: "OK",
+    kpis: [
+      { label: "% entries compliant", value: "98.7%" },
+      { label: "Blocked entries (MTD)", value: "42" },
+      { label: "DMRE audit readiness", value: "95%", isAI: true },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor"],
+  },
+  {
+    id: "smart-loadout",
+    title: "Smart Loadout",
+    description: "Accurate load volume scanning for haul trucks.",
+    icon: ScanLine,
+    href: "/fleet", // Points to fleet for now
+    status: "Warning",
+    kpis: [
+      { label: "Overloads this shift", value: "8" },
+      { label: "Uplift vs Plan (ZAR)", value: "R85k", isAI: true },
+      { label: "Carryback tonnes", value: "1.2t" },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor", "Operator"],
+  },
+];

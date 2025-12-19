@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -11,55 +12,30 @@ import {
   SidebarMenuButton,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import {
-  Home,
-  User,
-  Users,
-  Briefcase,
-  Truck,
-  Mountain,
-  Shield,
-  ClipboardCheck,
-  Camera,
-  Layers,
-  FileText,
-  Network,
-  Factory,
-  BarChart3,
-  GitCommit,
-  Wind,
-  Cog,
-  ShieldAlert,
-  ScanLine,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Home, FileText, Settings } from "lucide-react";
+import { serviceCatalog, type UserRole } from "@/lib/service-catalog";
 
-interface MenuItem {
-  href: string;
-  label: string;
-  icon: LucideIcon;
-}
-
-const adminMenuItems: MenuItem[] = [
-  { href: "/hub", label: "Dashboard", icon: Home },
-  { href: "/smarthub", label: "Smart Hub", icon: ShieldCheck },
-  { href: "/executive", label: "Smart Management", icon: BarChart3 },
-  { href: "/supervisor", label: "Smart Control", icon: Cog },
-  { href: "/operator", label: "Smart People", icon: Users },
-  { href: "/safety", label: "Smart Risk", icon: ShieldAlert },
-  { href: "/fleet", label: "Smart Transport", icon: Truck },
-  { href: "/plant", label: "Smart Operations", icon: Factory },
-  { href: "/earthworks", label: "Smart Geotech", icon: GitCommit },
-  { href: "/drones", label: "Smart Survey", icon: Wind },
-  { href: "/network", label: "Smart Network", icon: Network },
-  { href: "/twin", label: "Smart Scenarios", icon: Layers },
-  { href: "/sensors", label: "Sensor Stack", icon: Network },
-  { href: "/reports", label: "Reports", icon: FileText },
-];
+// Mock role for demonstration. In a real app, this would come from an auth hook.
+const MOCK_CURRENT_USER_ROLE: UserRole = "Admin";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const menuItems = adminMenuItems; 
+
+  const userVisibleServices = serviceCatalog.filter(service => 
+    service.enabled && service.rolesAllowed.includes(MOCK_CURRENT_USER_ROLE)
+  );
+
+  // Use a Set to get unique services, as some might share a link/page
+  const uniqueMenuLinks = Array.from(new Set(userVisibleServices.map(s => s.href)))
+    .map(href => {
+      // Find the first service that matches the href to get its details
+      return userVisibleServices.find(s => s.href === href)!;
+    });
+
+  const generalMenuItems = [
+    { href: "/reports", label: "Reports", icon: FileText },
+    { href: "/sensors", label: "Sensor Stack", icon: Settings },
+  ];
 
   return (
     <Sidebar>
@@ -71,7 +47,30 @@ export function AppSidebar() {
       <SidebarSeparator />
       <SidebarContent className="pt-4">
         <SidebarMenu>
-          {menuItems.map((item) => (
+          <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname === '/hub'}>
+                <Link href="/hub">
+                  <Home />
+                  <span>Dashboard</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+          {uniqueMenuLinks.map((item) => (
+            <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton asChild isActive={pathname.startsWith(item.href)}>
+                <Link href={item.href}>
+                  <item.icon />
+                  {/* Find a representative title if multiple services use the same link */}
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+          
+          <SidebarSeparator />
+
+           {generalMenuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton asChild isActive={pathname.startsWith(item.href)}>
                 <Link href={item.href}>
