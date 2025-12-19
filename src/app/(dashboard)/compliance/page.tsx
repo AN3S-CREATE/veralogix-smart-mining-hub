@@ -7,8 +7,8 @@ export default function CompliancePage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-headline font-semibold text-primary">Workforce Compliance & Access</h1>
-        <p className="text-muted-foreground">Monitor and manage regulatory and internal compliance with SentryMine™.</p>
+        <h1 className="text-3xl font-headline font-semibold text-primary">Smart People</h1>
+        <p className="text-muted-foreground">Monitor and manage regulatory and internal compliance.</p>
       </header>
 
       <WorkforceComplianceKpiGrid />

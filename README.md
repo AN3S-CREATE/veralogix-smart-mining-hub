@@ -1,4 +1,4 @@
-# Veralogix Group SA — Smart Mining HUB (Smart Hub)
+# Veralogix Smart Mining HUB
 
 **Fueling growth at the intersection of strategy, chaos, and experimental tech.** 😈⚙️📡
 

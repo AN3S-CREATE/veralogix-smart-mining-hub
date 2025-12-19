@@ -4,8 +4,8 @@ export default function NetworkPage() {
   return (
     <div className="space-y-4">
       <header>
-        <h1 className="text-3xl font-headline font-semibold text-primary">Bioniq Network Status</h1>
-        <p className="text-muted-foreground">Monitor and manage your Bioniq network infrastructure.</p>
+        <h1 className="text-3xl font-headline font-semibold text-primary">Smart Network Status</h1>
+        <p className="text-muted-foreground">Monitor and manage your network infrastructure.</p>
       </header>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>

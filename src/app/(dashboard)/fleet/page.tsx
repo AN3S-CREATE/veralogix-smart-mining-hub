@@ -77,10 +77,10 @@ export default function FleetPage() {
     <div className="space-y-6">
       <header>
         <h1 className="text-3xl font-headline font-semibold text-primary">
-          Fleet &amp; Haulage Analytics
+          Smart Transport
         </h1>
         <p className="text-muted-foreground">
-          Combined operational insights from Tracker and Loadscan®.
+          Vehicle loading, tracking, and quality control.
         </p>
       </header>
 

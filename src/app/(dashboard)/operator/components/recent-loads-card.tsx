@@ -29,7 +29,7 @@ export function RecentLoadsCard() {
     return (
         <Card className="card-hover">
             <CardHeader>
-                <CardTitle>Recent Loads (Loadscan®)</CardTitle>
+                <CardTitle>Recent Loads</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
                 <Table>

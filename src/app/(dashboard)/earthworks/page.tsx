@@ -9,7 +9,7 @@ export default function EarthworksPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-headline font-semibold text-primary">Trimble Earthworks</h1>
+        <h1 className="text-3xl font-headline font-semibold text-primary">Smart Geotech</h1>
         <p className="text-muted-foreground">Monitor and manage haul road and bench quality with high-precision data.</p>
       </header>
 

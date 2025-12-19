@@ -115,8 +115,7 @@ export default function LoginPage() {
                         </CardContent>
                     </Card>
                     <div className="mx-auto mt-6 flex items-center justify-center gap-2">
-                        <p className="text-sm text-neutral-400">Powered by</p>
-                        <img src="/NeuroLogix V2.png" alt="neuroLogix Logo" className="h-6" />
+                        <p className="text-sm text-neutral-400">Powered by Veralogix</p>
                     </div>
                 </div>
             </main>

@@ -8,7 +8,7 @@ export default function DronesPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-headline font-semibold text-primary">VTOL & Survey</h1>
+        <h1 className="text-3xl font-headline font-semibold text-primary">Smart Survey</h1>
         <p className="text-muted-foreground">Manage drone flights and survey data.</p>
       </header>
       

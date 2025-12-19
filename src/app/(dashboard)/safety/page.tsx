@@ -8,8 +8,8 @@ export default function SafetyPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-headline font-semibold text-primary">Safety & CPS Intelligence</h1>
-        <p className="text-muted-foreground">Monitor Prox-Eye™, Cabin-Eye™, and incident data in real-time.</p>
+        <h1 className="text-3xl font-headline font-semibold text-primary">Smart Risk</h1>
+        <p className="text-muted-foreground">Monitor proximity detection, operator fatigue, and incident data in real-time.</p>
       </header>
 
       <SafetyKpiGrid />
