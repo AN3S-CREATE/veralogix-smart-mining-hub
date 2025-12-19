@@ -1,4 +1,5 @@
 
+
 import { AutomatedActionsCard } from "../hub/components/automated-actions-card";
 import { SmartHubQueueCard } from "../hub/components/smart-hub-queue-card";
 import { SouthAfricanKpiGrid } from "../hub/components/south-african-kpi-grid";
@@ -16,7 +17,7 @@ export default function SmartHubPage() {
       <SouthAfricanKpiGrid />
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-primary/80">Plant &amp; Tailings Sensor Snapshot</h2>
+        <h2 className="text-xl font-semibold text-primary/80">Plant & Tailings Sensor Snapshot</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <PlantSensorCoverageCard />
             <ProcessRiskCard />
@@ -24,7 +25,7 @@ export default function SmartHubPage() {
       </section>
       
        <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-primary/80">Actions &amp; Queues</h2>
+        <h2 className="text-xl font-semibold text-primary/80">Actions & Queues</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <AutomatedActionsCard />
           <SmartHubQueueCard />

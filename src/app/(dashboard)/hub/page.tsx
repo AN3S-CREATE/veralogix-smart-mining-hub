@@ -1,4 +1,5 @@
 
+
 import { ModuleGrid } from "./components/module-grid";
 import { AiInsightsStrip } from "./components/ai-insights-strip";
 import { UserRole, serviceCatalog } from "@/lib/service-catalog";
