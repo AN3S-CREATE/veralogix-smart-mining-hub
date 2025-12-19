@@ -1,4 +1,3 @@
-
 import {
   GitCommit,
   Car,
@@ -12,6 +11,10 @@ import {
   Factory,
   ShieldCheck,
   ScanLine,
+  Zap,
+  Leaf,
+  BrainCircuit,
+  Truck,
   type LucideIcon,
 } from "lucide-react";
 import type { StatusPillStatus } from "@/components/shared/status-pill";
@@ -210,5 +213,65 @@ export const serviceCatalog: ServiceDefinition[] = [
     ],
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor", "Operator"],
+  },
+  {
+    id: "smart-energy",
+    title: "Smart Energy Management",
+    description: "Optimize energy consumption across the site.",
+    icon: Zap,
+    href: "/energy",
+    status: "OK",
+    kpis: [
+      { label: "Energy Cost (24h)", value: "R1.2M" },
+      { label: "AI Savings", value: "4.1%", isAI: true },
+      { label: "Grid Stability", value: "99.8%" },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Executive", "Supervisor"],
+  },
+  {
+    id: "smart-environmental",
+    title: "Smart Environmental Compliance",
+    description: "Track emissions, water, and dust compliance.",
+    icon: Leaf,
+    href: "/environmental",
+    status: "OK",
+    kpis: [
+      { label: "Dust Levels", value: "Normal" },
+      { label: "Water Quality", value: "Compliant" },
+      { label: "CO2 Index", value: "98.5" },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Executive"],
+  },
+  {
+    id: "smart-predictive",
+    title: "Smart Predictive Analytics",
+    description: "AI-driven forecasts and predictive models.",
+    icon: BrainCircuit,
+    href: "/predictive",
+    status: "OK",
+    kpis: [
+      { label: "Failure Prediction Acc.", value: "92%", isAI: true },
+      { label: "Production Forecast", value: "+2.5%", isAI: true },
+      { label: "Safety Risk", value: "Low", isAI: true },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Executive", "Supervisor"],
+  },
+  {
+    id: "smart-supply-chain",
+    title: "Smart Supply Chain & Inventory",
+    description: "Manage inventory, logistics, and supply chain.",
+    icon: Truck,
+    href: "/supply-chain",
+    status: "OK",
+    kpis: [
+      { label: "Inventory Levels", value: "Optimal" },
+      { label: "Delivery ETA", value: "On Time" },
+      { label: "Stockout Risk", value: "Low" },
+    ],
+    enabled: true,
+    rolesAllowed: ["Admin", "Supervisor"],
   },
 ];
