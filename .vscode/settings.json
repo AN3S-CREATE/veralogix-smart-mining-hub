@@ -4,5 +4,6 @@
     "geminicodeassist.codeGenerationPaneViewEnabled": true,
     "geminicodeassist.inlineSuggestions.nextEditPredictions": true,
     "geminicodeassist.updateChannel": "Default",
-    "geminicodeassist.verboseLogging": false
+    "geminicodeassist.verboseLogging": false,
+    "diffEditor.codeLens": true
 }

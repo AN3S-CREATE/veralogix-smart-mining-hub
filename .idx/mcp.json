@@ -12,4 +12,11 @@
       ]
     }
   }
-}
+},
+    "project": {
+      "command": "npm",
+      "args": [
+        "run",
+        "start"
+      ]
+    }
