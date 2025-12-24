@@ -1,4 +1,3 @@
-
 'use client';
 
 import { BarChart3, Fuel, Tractor, AlertOctagon } from "lucide-react";

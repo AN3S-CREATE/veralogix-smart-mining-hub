@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -41,7 +40,7 @@ export function TailingsRiskCard() {
         
         <div className="space-y-4">
             <div className="flex justify-between items-start">
-                <h4 className="font-medium">AI Tailings Risk Score</h4>
+                <h4 className="font-medium">AI Risk Score</h4>
                 <Badge variant="outline" className="border-accent text-accent text-xs">AI Insight</Badge>
             </div>
             <div className="relative">

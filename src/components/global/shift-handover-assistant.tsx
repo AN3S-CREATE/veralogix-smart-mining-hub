@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -39,10 +40,10 @@ export function ShiftHandoverAssistant() {
   }, []);
 
   return (
-    <Card className="bg-transparent border-0 shadow-none">
+    <Card className="bg-sidebar-accent border-sidebar-border shadow-none">
       <CardHeader className="flex-row items-center justify-between p-2">
         <CardTitle className="text-base font-semibold text-sidebar-accent-foreground">Shift Handover</CardTitle>
-        <Button variant="ghost" size="icon" onClick={fetchReport} disabled={loading} className="size-7">
+        <Button variant="ghost" size="icon" onClick={fetchReport} disabled={loading} className="size-7 text-sidebar-foreground hover:bg-sidebar-background/50 hover:text-sidebar-accent-foreground">
           {loading ? <Loader2 className="size-4 animate-spin" /> : <Redo className="size-4" />}
           <span className="sr-only">Refresh Report</span>
         </Button>
@@ -50,12 +51,12 @@ export function ShiftHandoverAssistant() {
       <CardContent className="p-2 text-sm text-sidebar-foreground">
         {loading ? (
           <div className="space-y-2">
-            <div className="h-4 w-full animate-pulse rounded bg-sidebar-accent" />
-            <div className="h-4 w-5/6 animate-pulse rounded bg-sidebar-accent" />
-            <div className="h-4 w-full animate-pulse rounded bg-sidebar-accent" />
+            <div className="h-4 w-full animate-pulse rounded bg-sidebar-background/50" />
+            <div className="h-4 w-5/6 animate-pulse rounded bg-sidebar-background/50" />
+            <div className="h-4 w-full animate-pulse rounded bg-sidebar-background/50" />
           </div>
         ) : (
-          <p className="whitespace-pre-wrap">{report}</p>
+          <p className="whitespace-pre-wrap text-xs">{report}</p>
         )}
       </CardContent>
     </Card>

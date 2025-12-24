@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, memo } from 'react';
@@ -71,7 +70,7 @@ export default function LoginPage() {
                     <Card className="w-full bg-[#1E1C1C]/80 backdrop-blur-sm border-[#4A4747] text-white overflow-hidden">
                         <CardContent className="p-6 lg:p-8 flex flex-col">
                              <div className="mx-auto mb-4">
-                                <img src="/veralogix-logo.png" alt="Company Logo" width="240" />
+                                <img src="/logo-placeholder.png" alt="Company Logo" width="240" />
                             </div>
                             
                             <div className="w-full max-w-md mx-auto">

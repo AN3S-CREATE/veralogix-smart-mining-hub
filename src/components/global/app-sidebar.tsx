@@ -11,9 +11,11 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarSeparator,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Home, FileText, Settings, AlertTriangle, CheckSquare, Package } from "lucide-react";
 import { serviceCatalog, type UserRole } from "@/lib/service-catalog";
+import { ShiftHandoverAssistant } from "./shift-handover-assistant";
 
 // Mock role for demonstration. In a real app, this would come from an auth hook.
 const MOCK_CURRENT_USER_ROLE: UserRole = "Admin";
@@ -111,6 +113,9 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
+      <SidebarFooter className="p-2">
+        <ShiftHandoverAssistant />
+      </SidebarFooter>
     </Sidebar>
   );
 }
