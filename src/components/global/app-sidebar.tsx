@@ -17,7 +17,6 @@ import {
 import { Home, FileText, Settings, AlertTriangle, CheckSquare, Package } from "lucide-react";
 import { serviceCatalog, type UserRole } from "@/lib/service-catalog";
 import { ShiftHandoverAssistant } from "./shift-handover-assistant";
-import VeralogixLogo from '@/assets/veralogix-logo.png';
 
 // Mock role for demonstration. In a real app, this would come from an auth hook.
 const MOCK_CURRENT_USER_ROLE: UserRole = "Admin";
@@ -49,9 +48,9 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="p-4 flex justify-center">
+      <SidebarHeader className="p-4 flex justify-center items-center">
         <Link href="/hub">
-          <Image src={VeralogixLogo} alt="Veralogix Logo" className="w-48"/>
+          <Image src="/veralogix-logo.png" alt="Veralogix Logo" width={192} height={40} className="w-48"/>
         </Link>
       </SidebarHeader>
       <SidebarSeparator />

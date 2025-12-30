@@ -9,8 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { HardHat, Users, Briefcase, Home, ArrowLeft } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import Background from '@/assets/background.png';
-import Logo from '@/assets/logo-placeholder.png';
 import Image from 'next/image';
 
 
@@ -64,17 +62,19 @@ export default function LoginPage() {
         <>
             <div className="fixed inset-0 w-full h-full -z-10">
                 <Image
-                    src={Background}
+                    src="/background.png"
                     alt="Background"
-                    className="w-full h-full object-cover"
+                    layout="fill"
+                    objectFit="cover"
+                    priority
                 />
             </div>
             <main className="relative min-h-screen w-full flex justify-center items-center p-4 sm:p-8">
                  <div className="w-full max-w-xl">
                     <Card className="w-full bg-[#1E1C1C]/80 backdrop-blur-sm border-[#4A4747] text-white overflow-hidden">
-                        <CardContent className="p-6 lg:p-8 flex flex-col">
+                        <CardContent className="p-6 lg:p-8 flex flex-col items-center">
                              <div className="flex justify-center mb-4">
-                                <Image src={Logo} alt="Company Logo" width="240" />
+                                <Image src="/logo-placeholder.png" alt="Company Logo" width="240" height="60" />
                             </div>
                             
                             <div className="w-full max-w-md mx-auto">
