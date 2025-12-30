@@ -47,8 +47,8 @@ export function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="p-4">
-        <Link href="/hub" className="flex justify-center w-48 mx-auto">
+      <SidebarHeader className="p-4 flex justify-center">
+        <Link href="/hub" className="w-48">
           <img src="/veralogix-logo.png" alt="Veralogix Logo" />
         </Link>
       </SidebarHeader>

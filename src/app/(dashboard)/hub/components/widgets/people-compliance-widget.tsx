@@ -1,7 +1,8 @@
+
 'use client';
 
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, Timestamp } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import { DashboardWidget } from './dashboard-widget';
 import { Loader2 } from 'lucide-react';
 
@@ -12,9 +13,12 @@ export function PeopleComplianceWidget() {
     if (!firestore) return null;
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+    // Note: Firestore does not support inequality checks on different fields in the same query.
+    // A more robust solution would involve a 'status' field or client-side filtering.
+    // This query is a simplification.
     return query(
       collection(firestore, 'complianceItems'),
-      where('expiryDate', '<=', Timestamp.fromDate(thirtyDaysFromNow))
+      where('status', '==', 'Expiring Soon')
     );
   }, [firestore]);
 
