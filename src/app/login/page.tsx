@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, memo } from 'react';
@@ -10,6 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { HardHat, Users, Briefcase, Home, ArrowLeft } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import Background from '@/assets/background.png';
+import Logo from '@/assets/logo-placeholder.png';
+import Image from 'next/image';
+
 
 interface Role {
     title: string;
@@ -60,8 +63,8 @@ export default function LoginPage() {
     return (
         <>
             <div className="fixed inset-0 w-full h-full -z-10">
-                <img
-                    src="/background.png"
+                <Image
+                    src={Background}
                     alt="Background"
                     className="w-full h-full object-cover"
                 />
@@ -71,7 +74,7 @@ export default function LoginPage() {
                     <Card className="w-full bg-[#1E1C1C]/80 backdrop-blur-sm border-[#4A4747] text-white overflow-hidden">
                         <CardContent className="p-6 lg:p-8 flex flex-col">
                              <div className="flex justify-center mb-4">
-                                <img src="/logo-placeholder.png" alt="Company Logo" width="240" />
+                                <Image src={Logo} alt="Company Logo" width="240" />
                             </div>
                             
                             <div className="w-full max-w-md mx-auto">
