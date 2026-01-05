@@ -61,6 +61,7 @@ export function AppSidebar() {
                     width={192} 
                     height={40} 
                     className="w-48"
+                    unoptimized
                 />
             )}
         </Link>

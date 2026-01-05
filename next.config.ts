@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -12,6 +13,14 @@ const nextConfig: NextConfig = {
     serverActions: {
       allowedOrigins: ["*.cloudworkstations.dev"]
     }
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
+    ],
   },
 };
 

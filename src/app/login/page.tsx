@@ -88,7 +88,8 @@ export default function LoginPage() {
                                         alt={loginLogo.description} 
                                         data-ai-hint={loginLogo.imageHint}
                                         width="240" 
-                                        height="60" 
+                                        height="60"
+                                        unoptimized
                                     />
                                 )}
                             </div>
