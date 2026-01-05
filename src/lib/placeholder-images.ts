@@ -1,3 +1,11 @@
+// =================================================================
+// CRITICAL - DO NOT MODIFY
+// =================================================================
+// This file contains approved, production branding assets.
+// The image paths are final and have been explicitly approved.
+// Do not change these paths or replace them with placeholders.
+// Modifying this file will break critical branding.
+// =================================================================
 
 export type ImagePlaceholder = {
   id: string;
