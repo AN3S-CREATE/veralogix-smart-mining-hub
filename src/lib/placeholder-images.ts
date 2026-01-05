@@ -11,7 +11,7 @@ export type ImagePlaceholder = {
 export const PlaceHolderImages: ImagePlaceholder[] = [
     {
         id: 'login-logo',
-        description: 'The main logo displayed on the login page.',
+        description: 'The Veralogix logo displayed on the login page.',
         imageUrl: 'https://picsum.photos/seed/veralogix-logo/240/60',
         imageHint: 'company logo',
         width: 240,
@@ -27,8 +27,8 @@ export const PlaceHolderImages: ImagePlaceholder[] = [
     },
      {
         id: 'login-background',
-        description: 'The background image for the login page.',
-        imageUrl: 'https://picsum.photos/seed/login-bg/1920/1080',
+        description: 'A background image of professional mining equipment.',
+        imageUrl: 'https://picsum.photos/seed/mining-excavator/1920/1080',
         imageHint: 'mining equipment'
     }
 ];
