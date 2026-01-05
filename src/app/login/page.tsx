@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, memo } from 'react';
@@ -10,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { HardHat, Users, Briefcase, Home, ArrowLeft } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 
 interface Role {
@@ -57,24 +59,38 @@ export default function LoginPage() {
             router.push(selectedRole.href);
         }
     }
+    
+    const loginLogo = PlaceHolderImages.find(img => img.id === 'login-logo');
+    const loginBg = PlaceHolderImages.find(img => img.id === 'login-background');
 
     return (
         <>
             <div className="fixed inset-0 w-full h-full -z-10">
-                <Image
-                    src="/background.png"
-                    alt="Background"
-                    layout="fill"
-                    objectFit="cover"
-                    priority
-                />
+                {loginBg && (
+                    <Image
+                        src={loginBg.imageUrl}
+                        alt={loginBg.description}
+                        data-ai-hint={loginBg.imageHint}
+                        layout="fill"
+                        objectFit="cover"
+                        priority
+                    />
+                )}
             </div>
             <main className="relative min-h-screen w-full flex justify-center items-center p-4 sm:p-8">
                  <div className="w-full max-w-xl">
                     <Card className="w-full bg-[#1E1C1C]/80 backdrop-blur-sm border-[#4A4747] text-white overflow-hidden">
                         <CardContent className="p-6 lg:p-8 flex flex-col items-center">
                              <div className="flex justify-center mb-4">
-                                <Image src="/logo-placeholder.png" alt="Company Logo" width="240" height="60" />
+                                {loginLogo && (
+                                     <Image 
+                                        src={loginLogo.imageUrl} 
+                                        alt={loginLogo.description} 
+                                        data-ai-hint={loginLogo.imageHint}
+                                        width="240" 
+                                        height="60" 
+                                    />
+                                )}
                             </div>
                             
                             <div className="w-full max-w-md mx-auto">

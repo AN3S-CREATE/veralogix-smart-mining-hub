@@ -17,6 +17,7 @@ import {
 import { Home, FileText, Settings, AlertTriangle, CheckSquare, Package } from "lucide-react";
 import { serviceCatalog, type UserRole } from "@/lib/service-catalog";
 import { ShiftHandoverAssistant } from "./shift-handover-assistant";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 // Mock role for demonstration. In a real app, this would come from an auth hook.
 const MOCK_CURRENT_USER_ROLE: UserRole = "Admin";
@@ -46,11 +47,22 @@ export function AppSidebar() {
     { href: "/sensors", label: "Sensor Stack", icon: Settings },
   ];
 
+  const sidebarLogo = PlaceHolderImages.find(img => img.id === 'sidebar-logo');
+
   return (
     <Sidebar>
       <SidebarHeader className="p-4 flex justify-center items-center">
         <Link href="/hub">
-          <Image src="/veralogix-logo.png" alt="Veralogix Logo" width={192} height={40} className="w-48"/>
+            {sidebarLogo && (
+                <Image 
+                    src={sidebarLogo.imageUrl} 
+                    alt={sidebarLogo.description} 
+                    data-ai-hint={sidebarLogo.imageHint}
+                    width={192} 
+                    height={40} 
+                    className="w-48"
+                />
+            )}
         </Link>
       </SidebarHeader>
       <SidebarSeparator />
