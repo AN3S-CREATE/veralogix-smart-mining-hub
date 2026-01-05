@@ -58,10 +58,9 @@ export function AppSidebar() {
                     src={sidebarLogo.imageUrl} 
                     alt={sidebarLogo.description} 
                     data-ai-hint={sidebarLogo.imageHint}
-                    width={192} 
-                    height={40} 
+                    width={sidebarLogo.width} 
+                    height={sidebarLogo.height} 
                     className="w-48"
-                    unoptimized
                 />
             )}
         </Link>

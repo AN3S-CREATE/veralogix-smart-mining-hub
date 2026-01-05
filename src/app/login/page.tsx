@@ -71,7 +71,7 @@ export default function LoginPage() {
                         src={loginBg.imageUrl}
                         alt={loginBg.description}
                         data-ai-hint={loginBg.imageHint}
-                        layout="fill"
+                        fill
                         objectFit="cover"
                         priority
                     />
@@ -87,9 +87,8 @@ export default function LoginPage() {
                                         src={loginLogo.imageUrl} 
                                         alt={loginLogo.description} 
                                         data-ai-hint={loginLogo.imageHint}
-                                        width="240" 
-                                        height="60"
-                                        unoptimized
+                                        width={loginLogo.width} 
+                                        height={loginLogo.height}
                                     />
                                 )}
                             </div>
