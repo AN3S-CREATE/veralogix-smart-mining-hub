@@ -26,30 +26,32 @@ export function DrillAndBlastSection() {
     { accessorKey: 'timestamp', header: 'Timestamp' },
   ];
 
-  const handleAddDrillLog = async (formData: Record<string, any>) => {
+  const handleAddDrillLog = (formData: Record<string, any>) => {
     if (!firestore) return;
-    try {
-      const docData = {
-        ...formData,
-        depth: parseFloat(formData.depth),
-        timestamp: new Date().toISOString(),
-      };
-      await addDoc(collection(firestore, 'drillLogs'), docData);
-      toast({ title: 'Success', description: 'Drill log added.' });
-      
-      if (docData.depth > 20) { // Example threshold for deep drill hole
-        await createAlert(firestore, {
-          moduleKey: 'plant',
-          severity: 'Warning',
-          description: `Unusually deep drill hole logged: ${docData.depth}m for hole ${docData.holeId}.`,
-        });
-        toast({ title: 'Alert Created', description: 'Deep drill hole alert triggered.' });
-      }
+    
+    const docData = {
+      ...formData,
+      depth: parseFloat(formData.depth),
+      timestamp: new Date().toISOString(),
+    };
 
-    } catch (e) {
-      console.error(e);
-      toast({ title: 'Error', description: 'Could not add drill log.', variant: 'destructive' });
-    }
+    addDoc(collection(firestore, 'drillLogs'), docData)
+      .then(() => {
+        toast({ title: 'Success', description: 'Drill log added.' });
+        if (docData.depth > 20) { // Example threshold for deep drill hole
+          createAlert(firestore, {
+            moduleKey: 'plant',
+            severity: 'Warning',
+            description: `Unusually deep drill hole logged: ${docData.depth}m for hole ${docData.holeId}.`,
+          }).then(() => {
+            toast({ title: 'Alert Created', description: 'Deep drill hole alert triggered.' });
+          });
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        toast({ title: 'Error', description: 'Could not add drill log.', variant: 'destructive' });
+      });
   };
 
   return (

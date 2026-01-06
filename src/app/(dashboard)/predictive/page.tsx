@@ -36,30 +36,33 @@ export default function PredictiveAnalyticsPage() {
     { accessorKey: 'confidence', header: 'Confidence' },
   ];
 
-  const handleAddPrediction = async (formData: Record<string, any>) => {
+  const handleAddPrediction = (formData: Record<string, any>) => {
     if (!firestore) return;
-    try {
-      const docData = {
-        ...formData,
-        predictedValue: parseFloat(formData.predictedValue),
-        confidence: parseFloat(formData.confidence),
-        predictionDate: new Date().toISOString(),
-      };
-      await addDoc(collection(firestore, 'predictiveOutputs'), docData);
-      toast({ title: 'Success', description: 'Predictive model output added.' });
+    
+    const docData = {
+      ...formData,
+      predictedValue: parseFloat(formData.predictedValue),
+      confidence: parseFloat(formData.confidence),
+      predictionDate: new Date().toISOString(),
+    };
 
-      if (docData.targetMetric.toLowerCase().includes('failure') && docData.confidence > 0.9) {
-         await createAlert(firestore, {
-          moduleKey: 'predictive',
-          severity: 'High',
-          description: `High-confidence failure prediction from model ${docData.modelName}.`,
-        });
-        toast({ title: 'Alert Created', description: 'Failure prediction alert has been triggered.' });
-      }
-    } catch (e) {
-      console.error(e);
-      toast({ title: 'Error', description: 'Could not add prediction.', variant: 'destructive' });
-    }
+    addDoc(collection(firestore, 'predictiveOutputs'), docData)
+      .then(() => {
+        toast({ title: 'Success', description: 'Predictive model output added.' });
+        if (docData.targetMetric.toLowerCase().includes('failure') && docData.confidence > 0.9) {
+           createAlert(firestore, {
+            moduleKey: 'predictive',
+            severity: 'High',
+            description: `High-confidence failure prediction from model ${docData.modelName}.`,
+          }).then(() => {
+            toast({ title: 'Alert Created', description: 'Failure prediction alert has been triggered.' });
+          });
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        toast({ title: 'Error', description: 'Could not add prediction.', variant: 'destructive' });
+      });
   };
 
   return (

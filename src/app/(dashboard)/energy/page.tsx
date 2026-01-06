@@ -36,29 +36,32 @@ export default function EnergyPage() {
     { accessorKey: 'unit', header: 'Unit' },
   ];
 
-  const handleAddMetric = async (data: Record<string, any>) => {
+  const handleAddMetric = (data: Record<string, any>) => {
     if (!firestore) return;
-    try {
-      const docData = {
-        ...data,
-        value: parseFloat(data.value),
-        timestamp: new Date().toISOString(),
-      };
-      await addDoc(collection(firestore, 'energyMetrics'), docData);
-      toast({ title: 'Success', description: 'Energy metric added.' });
-      
-      if (parseFloat(data.value) > 1000) { // Example condition for an alert
-        await createAlert(firestore, {
-          moduleKey: 'energy',
-          severity: 'High',
-          description: `High energy consumption detected: ${data.value} ${data.unit} at ${data.site}`,
-        });
-        toast({ title: 'Alert Created', description: 'High energy consumption alert triggered.' });
-      }
-    } catch (e) {
-      console.error(e);
-      toast({ title: 'Error', description: 'Could not add metric.', variant: 'destructive' });
-    }
+    
+    const docData = {
+      ...data,
+      value: parseFloat(data.value),
+      timestamp: new Date().toISOString(),
+    };
+
+    addDoc(collection(firestore, 'energyMetrics'), docData)
+      .then(() => {
+        toast({ title: 'Success', description: 'Energy metric added.' });
+        if (parseFloat(data.value) > 1000) { // Example condition for an alert
+            createAlert(firestore, {
+              moduleKey: 'energy',
+              severity: 'High',
+              description: `High energy consumption detected: ${data.value} ${data.unit} at ${data.site}`,
+            }).then(() => {
+              toast({ title: 'Alert Created', description: 'High energy consumption alert triggered.' });
+            });
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        toast({ title: 'Error', description: 'Could not add metric.', variant: 'destructive' });
+      });
   };
 
   return (

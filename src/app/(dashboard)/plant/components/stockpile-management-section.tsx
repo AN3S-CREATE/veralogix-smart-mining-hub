@@ -26,31 +26,33 @@ export function StockpileManagementSection() {
     { accessorKey: 'surveyMethod', header: 'Method' },
   ];
 
-  const handleAddStockpile = async (formData: Record<string, any>) => {
+  const handleAddStockpile = (formData: Record<string, any>) => {
     if (!firestore) return;
-    try {
-      const docData = {
-        ...formData,
-        measuredVolume: parseFloat(formData.measuredVolume),
-        measuredTonnage: parseFloat(formData.measuredTonnage),
-        surveyDate: new Date().toISOString(),
-      };
-      await addDoc(collection(firestore, 'stockpileVolumes'), docData);
-      toast({ title: 'Success', description: 'Stockpile data added.' });
-      
-      if(docData.measuredTonnage > 50000) {
-        await createAlert(firestore, {
-            moduleKey: 'plant',
-            severity: 'Info',
-            description: `Large stockpile measured: ${docData.stockpileName} at ${docData.measuredTonnage} tonnes.`,
-        });
-        toast({ title: 'Info', description: 'Large stockpile measurement recorded.' });
-      }
+    
+    const docData = {
+      ...formData,
+      measuredVolume: parseFloat(formData.measuredVolume),
+      measuredTonnage: parseFloat(formData.measuredTonnage),
+      surveyDate: new Date().toISOString(),
+    };
 
-    } catch (e) {
-      console.error(e);
-      toast({ title: 'Error', description: 'Could not add stockpile data.', variant: 'destructive' });
-    }
+    addDoc(collection(firestore, 'stockpileVolumes'), docData)
+      .then(() => {
+        toast({ title: 'Success', description: 'Stockpile data added.' });
+        if(docData.measuredTonnage > 50000) {
+          createAlert(firestore, {
+              moduleKey: 'plant',
+              severity: 'Info',
+              description: `Large stockpile measured: ${docData.stockpileName} at ${docData.measuredTonnage} tonnes.`,
+          }).then(() => {
+            toast({ title: 'Info', description: 'Large stockpile measurement recorded.' });
+          });
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        toast({ title: 'Error', description: 'Could not add stockpile data.', variant: 'destructive' });
+      });
   };
 
   return (

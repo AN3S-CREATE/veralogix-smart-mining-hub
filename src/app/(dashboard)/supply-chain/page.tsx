@@ -36,31 +36,33 @@ export default function SupplyChainPage() {
     { accessorKey: 'isCritical', header: 'Critical' },
   ];
 
-  const handleAddItem = async (formData: Record<string, any>) => {
+  const handleAddItem = (formData: Record<string, any>) => {
     if (!firestore) return;
-    try {
-      const docData = {
-        ...formData,
-        quantity: parseInt(formData.quantity, 10),
-        reorderPoint: parseInt(formData.reorderPoint, 10),
-        isCritical: formData.isCritical === 'true',
-      };
-      await addDoc(collection(firestore, 'inventoryItems'), docData);
-      toast({ title: 'Success', description: 'Inventory item added.' });
+    
+    const docData = {
+      ...formData,
+      quantity: parseInt(formData.quantity, 10),
+      reorderPoint: parseInt(formData.reorderPoint, 10),
+      isCritical: formData.isCritical === 'true',
+    };
 
-      if (docData.isCritical && docData.quantity <= docData.reorderPoint) {
-         await createAlert(firestore, {
-          moduleKey: 'supply-chain',
-          severity: 'Critical',
-          description: `Critical low stock for item: ${docData.itemName}. Quantity: ${docData.quantity}`,
-        });
-        toast({ title: 'Alert Created', description: 'Critical low stock alert has been triggered.' });
-      }
-
-    } catch (e) {
-      console.error(e);
-      toast({ title: 'Error', description: 'Could not add item.', variant: 'destructive' });
-    }
+    addDoc(collection(firestore, 'inventoryItems'), docData)
+      .then(() => {
+        toast({ title: 'Success', description: 'Inventory item added.' });
+        if (docData.isCritical && docData.quantity <= docData.reorderPoint) {
+           createAlert(firestore, {
+            moduleKey: 'supply-chain',
+            severity: 'Critical',
+            description: `Critical low stock for item: ${docData.itemName}. Quantity: ${docData.quantity}`,
+          }).then(() => {
+            toast({ title: 'Alert Created', description: 'Critical low stock alert has been triggered.' });
+          });
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        toast({ title: 'Error', description: 'Could not add item.', variant: 'destructive' });
+      });
   };
 
   return (

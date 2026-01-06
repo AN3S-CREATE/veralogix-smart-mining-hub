@@ -26,29 +26,32 @@ export function BlastingSection() {
     { accessorKey: 'status', header: 'Status' },
   ];
 
-  const handleAddBlastDesign = async (formData: Record<string, any>) => {
+  const handleAddBlastDesign = (formData: Record<string, any>) => {
     if (!firestore) return;
-    try {
-      const docData = {
-        ...formData,
-        powderFactor: parseFloat(formData.powderFactor),
-        designDate: new Date().toISOString(),
-      };
-      await addDoc(collection(firestore, 'blastDesigns'), docData);
-      toast({ title: 'Success', description: 'Blast design added.' });
+    
+    const docData = {
+      ...formData,
+      powderFactor: parseFloat(formData.powderFactor),
+      designDate: new Date().toISOString(),
+    };
 
-      if (docData.powderFactor > 0.9) {
-        await createAlert(firestore, {
-          moduleKey: 'plant',
-          severity: 'High',
-          description: `High powder factor (${docData.powderFactor}) detected for blast ${docData.blastId}.`,
-        });
-        toast({ title: 'Alert Created', description: 'High powder factor alert triggered.' });
-      }
-    } catch (e) {
-      console.error(e);
-      toast({ title: 'Error', description: 'Could not add blast design.', variant: 'destructive' });
-    }
+    addDoc(collection(firestore, 'blastDesigns'), docData)
+      .then(() => {
+        toast({ title: 'Success', description: 'Blast design added.' });
+        if (docData.powderFactor > 0.9) {
+          createAlert(firestore, {
+            moduleKey: 'plant',
+            severity: 'High',
+            description: `High powder factor (${docData.powderFactor}) detected for blast ${docData.blastId}.`,
+          }).then(() => {
+            toast({ title: 'Alert Created', description: 'High powder factor alert triggered.' });
+          });
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        toast({ title: 'Error', description: 'Could not add blast design.', variant: 'destructive' });
+      });
   };
 
   return (

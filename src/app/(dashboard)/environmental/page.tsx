@@ -48,30 +48,32 @@ export default function EnvironmentalPage() {
     },
   ];
 
-  const handleAddDataPoint = async (formData: Record<string, any>) => {
+  const handleAddDataPoint = (formData: Record<string, any>) => {
     if (!firestore) return;
-    try {
-      const docData = {
-        ...formData,
-        value: parseFloat(formData.value),
-        timestamp: new Date().toISOString(),
-      };
-      await addDoc(collection(firestore, 'environmentalData'), docData);
-      toast({ title: 'Success', description: 'Environmental data point added.' });
 
-      if (docData.complianceStatus === 'Breach') {
-        await createAlert(firestore, {
-          moduleKey: 'environmental',
-          severity: 'Critical',
-          description: `Compliance breach: ${docData.metricType} at ${docData.value} ${docData.unit}`,
-        });
-        toast({ title: 'Alert Created', description: 'Compliance breach alert has been triggered.' });
-      }
+    const docData = {
+      ...formData,
+      value: parseFloat(formData.value),
+      timestamp: new Date().toISOString(),
+    };
 
-    } catch (e) {
-      console.error(e);
-      toast({ title: 'Error', description: 'Could not add data point.', variant: 'destructive' });
-    }
+    addDoc(collection(firestore, 'environmentalData'), docData)
+      .then(() => {
+        toast({ title: 'Success', description: 'Environmental data point added.' });
+        if (docData.complianceStatus === 'Breach') {
+            createAlert(firestore, {
+              moduleKey: 'environmental',
+              severity: 'Critical',
+              description: `Compliance breach: ${docData.metricType} at ${docData.value} ${docData.unit}`,
+            }).then(() => {
+              toast({ title: 'Alert Created', description: 'Compliance breach alert has been triggered.' });
+            });
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        toast({ title: 'Error', description: 'Could not add data point.', variant: 'destructive' });
+      });
   };
 
   return (
