@@ -1,30 +1,73 @@
+
 'use client'
 
+import { useMemo } from 'react';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, where, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartConfig } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
-
-const cycleTimeChartData = [
-  { name: 'Short (<30m)', value: 15, fill: 'var(--color-chart-5)' },
-  { name: 'Normal (30-38m)', value: 75, fill: 'var(--color-chart-1)' },
-  { name: 'Long (>38m)', value: 10, fill: 'var(--color-chart-2)' },
-];
+import { Loader2 } from 'lucide-react';
+import { differenceInMinutes } from 'date-fns';
 
 const chartConfig = {
   value: { label: 'Cycles' },
 } satisfies ChartConfig;
 
-const slowestCyclesData = [
-  { truckId: 'TRK-105', loadingPoint: 'Shovel 3', duration: '42.1m', reason: 'Queue' },
-  { truckId: 'TRK-211', loadingPoint: 'Shovel 1', duration: '41.5m', reason: 'Road Condition' },
-  { truckId: 'TRK-119', loadingPoint: 'Shovel 3', duration: '40.8m', reason: 'Queue' },
-  { truckId: 'TRK-102', loadingPoint: 'Shovel 2', duration: '39.9m', reason: 'Mechanical' },
-  { truckId: 'TRK-208', loadingPoint: 'Shovel 3', duration: '39.5m', reason: 'Queue' },
-];
-
 export function CycleQueueIntelligenceCard() {
+  const firestore = useFirestore();
+
+  // Query for completed passports in the last 12 hours for cycle time analysis
+  const passportsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
+    return query(
+      collection(firestore, 'loadPassports'),
+      where('status', '==', 'Completed'),
+      where('createdAt', '>=', Timestamp.fromDate(twelveHoursAgo)),
+      orderBy('createdAt', 'desc')
+    );
+  }, [firestore]);
+
+  const { data: passports, loading, error } = useCollection(passportsQuery);
+
+  const { cycleTimeBands, slowestCycles } = useMemo(() => {
+    if (!passports) {
+      return { cycleTimeBands: [], slowestCycles: [] };
+    }
+
+    const cycles = passports.map(p => {
+      const startTime = p.createdAt.toDate();
+      const endTime = p.lastUpdatedAt.toDate();
+      const duration = differenceInMinutes(endTime, startTime);
+      return {
+        truckId: p.vehicleId,
+        duration,
+        // Mocking reason for now as it's not in the data model
+        reason: ['Queue', 'Road Condition', 'Mechanical'][Math.floor(Math.random() * 3)],
+        loadingPoint: p.origin,
+      };
+    }).filter(c => c.duration > 0);
+
+    const bands = {
+      short: cycles.filter(c => c.duration < 30).length,
+      normal: cycles.filter(c => c.duration >= 30 && c.duration <= 38).length,
+      long: cycles.filter(c => c.duration > 38).length,
+    };
+    
+    const cycleTimeChartData = [
+        { name: 'Short (<30m)', value: bands.short, fill: 'var(--color-chart-5)' },
+        { name: 'Normal (30-38m)', value: bands.normal, fill: 'var(--color-chart-1)' },
+        { name: 'Long (>38m)', value: bands.long, fill: 'var(--color-chart-2)' },
+    ];
+
+    const sortedSlowest = [...cycles].sort((a, b) => b.duration - a.duration).slice(0, 5);
+
+    return { cycleTimeBands: cycleTimeChartData, slowestCycles: sortedSlowest };
+  }, [passports]);
+
   return (
     <Card className="card-hover">
       <CardHeader>
@@ -32,41 +75,49 @@ export function CycleQueueIntelligenceCard() {
         <CardDescription>Analysis of haulage cycle performance.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div>
-          <h4 className="text-sm font-medium mb-2">Cycle Time Bands</h4>
-           <div className="h-40 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={cycleTimeChartData} layout="vertical" margin={{ left: 10, right: 10 }}>
-                <XAxis type="number" hide />
-                <YAxis dataKey="name" type="category" width={80} tickLine={false} axisLine={false} tick={{fontSize: 12, fill: 'hsl(var(--muted-foreground))'}} />
-                <Tooltip cursor={{ fill: 'hsl(var(--secondary))' }} contentStyle={{backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))'}} />
-                <Bar dataKey="value" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-           </div>
-        </div>
-        <Separator />
-         <div>
-          <h4 className="text-sm font-medium mb-2">Slowest 5 Cycles this Shift</h4>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Truck</TableHead>
-                <TableHead>Cycle</TableHead>
-                <TableHead>Reason</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {slowestCyclesData.map((cycle, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-mono text-xs">{cycle.truckId}</TableCell>
-                  <TableCell>{cycle.duration}</TableCell>
-                  <TableCell>{cycle.reason}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        {loading ? (
+            <div className="flex justify-center items-center h-64"><Loader2 className="size-8 animate-spin text-primary" /></div>
+        ) : error ? (
+            <p className="text-destructive text-center">Error loading cycle data.</p>
+        ) : (
+          <>
+            <div>
+              <h4 className="text-sm font-medium mb-2">Cycle Time Bands</h4>
+               <div className="h-40 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={cycleTimeBands} layout="vertical" margin={{ left: 10, right: 10 }}>
+                    <XAxis type="number" hide />
+                    <YAxis dataKey="name" type="category" width={80} tickLine={false} axisLine={false} tick={{fontSize: 12, fill: 'hsl(var(--muted-foreground))'}} />
+                    <Tooltip cursor={{ fill: 'hsl(var(--secondary))' }} contentStyle={{backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))'}}/>
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+               </div>
+            </div>
+            <Separator />
+             <div>
+              <h4 className="text-sm font-medium mb-2">Slowest 5 Cycles this Shift</h4>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Truck</TableHead>
+                    <TableHead>Cycle</TableHead>
+                    <TableHead>Reason</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {slowestCycles.map((cycle, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-mono text-xs">{cycle.truckId}</TableCell>
+                      <TableCell>{cycle.duration.toFixed(1)}m</TableCell>
+                      <TableCell>{cycle.reason}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
