@@ -1,20 +1,18 @@
+
 'use client';
 
+import { useMemo } from 'react';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, where, orderBy, limit } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StatusPill, StatusPillStatus } from "@/components/shared/status-pill";
 import { Separator } from "@/components/ui/separator";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid } from "recharts";
 import type { ChartConfig } from "@/components/ui/chart";
-
-const gateActivity = [
-  { time: '14:02', workerId: 'V0822', role: 'Operator', site: 'Pit B', status: 'OK' as StatusPillStatus, reason: '' },
-  { time: '13:58', workerId: 'C1045', role: 'Maintainer', site: 'Workshop', status: 'Critical' as StatusPillStatus, reason: 'Expired License' },
-  { time: '13:55', workerId: 'V0731', role: 'Supervisor', site: 'Pit A', status: 'OK' as StatusPillStatus, reason: '' },
-  { time: '13:49', workerId: 'C3312', role: 'Operator', site: 'ROM Pad', status: 'Warning' as StatusPillStatus, reason: 'Medical Exp. (3d)' },
-  { time: '13:45', workerId: 'V0910', role: 'Geologist', site: 'Pit B', status: 'OK' as StatusPillStatus, reason: '' },
-];
+import { Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
 
 const chartData = [
   { hour: "06:00", compliant: 120, blocked: 5 },
@@ -32,7 +30,39 @@ const chartConfig = {
   blocked: { label: "Blocked", color: "hsl(var(--chart-2))" },
 } satisfies ChartConfig;
 
+// Mapping compliance status to pill status
+const getPillStatus = (status: string): StatusPillStatus => {
+  switch (status) {
+    case 'Compliant': return 'OK';
+    case 'Expiring Soon': return 'Warning';
+    case 'Expired': return 'Critical';
+    default: return 'Info';
+  }
+};
+
 export function GateActivityCard() {
+    const firestore = useFirestore();
+
+    const complianceItemsQuery = useMemoFirebase(() => {
+        if (!firestore) return null;
+        // Fetching a mix of recent compliance items to simulate gate activity
+        return query(collection(firestore, 'complianceItems'), orderBy('expiryDate', 'desc'), limit(5));
+    }, [firestore]);
+
+    const { data: complianceItems, loading, error } = useCollection(complianceItemsQuery);
+
+    const gateActivity = useMemo(() => {
+        if (!complianceItems) return [];
+        return complianceItems.map(item => ({
+            time: item.expiryDate ? format(new Date(item.expiryDate), 'HH:mm') : 'N/A', // Mocking time from expiry for demo
+            workerId: item.subject,
+            role: item.type, // Using type as a proxy for role
+            site: 'Pit B', // Mock site
+            status: getPillStatus(item.status),
+            reason: item.status !== 'Compliant' ? `${item.type} ${item.status}` : '',
+        }));
+    }, [complianceItems]);
+
     return (
         <Card className="card-hover">
             <CardHeader>
@@ -42,28 +72,32 @@ export function GateActivityCard() {
             <CardContent className="space-y-6">
                 <div>
                     <h4 className="text-sm font-medium mb-2">Recent Gate Events</h4>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Time</TableHead>
-                                <TableHead>Worker ID</TableHead>
-                                <TableHead>Role</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Reason</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {gateActivity.map((event, index) => (
-                                <TableRow key={index}>
-                                    <TableCell className="font-mono text-xs">{event.time}</TableCell>
-                                    <TableCell className="font-mono text-xs">{event.workerId}</TableCell>
-                                    <TableCell>{event.role}</TableCell>
-                                    <TableCell><StatusPill status={event.status} /></TableCell>
-                                    <TableCell className="text-destructive">{event.reason}</TableCell>
+                    {loading && <div className="flex justify-center items-center h-48"><Loader2 className="size-8 animate-spin text-primary" /></div>}
+                    {error && <p className="text-destructive text-center">Error loading gate activity.</p>}
+                    {!loading && !error && (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Time</TableHead>
+                                    <TableHead>Worker ID</TableHead>
+                                    <TableHead>Role</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Reason</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {gateActivity.map((event, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell className="font-mono text-xs">{event.time}</TableCell>
+                                        <TableCell className="font-mono text-xs">{event.workerId}</TableCell>
+                                        <TableCell>{event.role}</TableCell>
+                                        <TableCell><StatusPill status={event.status} /></TableCell>
+                                        <TableCell className="text-destructive">{event.reason}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    )}
                 </div>
                 <Separator />
                 <div>
