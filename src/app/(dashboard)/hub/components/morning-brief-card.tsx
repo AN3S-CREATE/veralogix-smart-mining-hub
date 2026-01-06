@@ -1,8 +1,11 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Lightbulb } from 'lucide-react';
+
+const CACHE_KEY = 'morningBrief';
 
 export function MorningBriefCard() {
   const [insights, setInsights] = useState<string[]>([]);
@@ -12,17 +15,30 @@ export function MorningBriefCard() {
     const fetchBrief = async () => {
       setLoading(true);
       try {
-        // Mocking AI response for demonstration
+        // Check for cached data first
+        const cachedBrief = sessionStorage.getItem(CACHE_KEY);
+        if (cachedBrief) {
+          setInsights(JSON.parse(cachedBrief));
+          setLoading(false);
+          return;
+        }
+
+        // If no cache, fetch "new" data
         const mockInsights = [
             "High-priority CAPA action for 'Ramp 3' is overdue.",
             "Truck TRK-205 has shown consistent underloading this shift.",
             "AI predicts a 15% increase in road degradation on Haul Road B.",
         ];
+        
         // In a real implementation, you would call your AI flow:
         // const result = await generateSmartHubMorningBrief({ ... });
-        // setInsights(result.topInsights);
+        // const newInsights = result.topInsights;
+        
         await new Promise(resolve => setTimeout(resolve, 1000)); // simulate network delay
+        
         setInsights(mockInsights);
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify(mockInsights)); // Cache the new data
+
       } catch (error) {
         console.error('Failed to generate morning brief:', error);
         setInsights(['Could not load morning brief.']);
