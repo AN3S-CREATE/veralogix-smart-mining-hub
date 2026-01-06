@@ -50,6 +50,20 @@ const payloadDistributionData = [
   { payload: '>110%', trucks: 3 },
 ];
 
+// Helper function to create a deterministic number from a string.
+// This is used to generate consistent mock data for UI demonstrations
+// without relying on Math.random(), which can cause hydration errors in Next.js.
+const hashCode = (s: string) => {
+  let hash = 0;
+  for (let i = 0; i < s.length; i++) {
+    const char = s.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+
+
 export default function FleetPage() {
   const firestore = useFirestore();
 
@@ -74,13 +88,15 @@ export default function FleetPage() {
     const fleetData = Array.from(new Set(passports.map(p => p.vehicleId)))
       .map(vehicleId => {
         const vehiclePassports = passports.filter(p => p.vehicleId === vehicleId);
+        const hash = hashCode(vehicleId);
+        
         return {
           id: vehicleId,
-          contractor: Math.random() > 0.5 ? 'Veralogix' : 'MACMAHON', // Mock
-          util: 80 + Math.floor(Math.random() * 20), // Mock
+          contractor: (hash % 2 === 0) ? 'Veralogix' : 'MACMAHON',
+          util: 80 + (hash % 21), // 80-100
           cycles: vehiclePassports.length,
-          avgPayload: 95 + Math.random() * 10, // Mock
-          idle: 5 + Math.floor(Math.random() * 10), // Mock
+          avgPayload: 95 + (hash % 11), // 95-105
+          idle: 5 + (hash % 16), // 5-20
         };
       });
 
