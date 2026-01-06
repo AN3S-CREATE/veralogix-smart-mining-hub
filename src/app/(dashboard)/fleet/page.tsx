@@ -1,6 +1,9 @@
 
 'use client';
 
+import { useMemo } from 'react';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
 import {
   Card,
   CardContent,
@@ -35,14 +38,7 @@ import {
 } from 'recharts';
 import { AiFuelForecastCard } from './components/ai-fuel-forecast-card';
 import { AiPayloadRoutingCard } from './components/ai-payload-routing-card';
-
-const kpis = [
-  { title: 'Tonnes Hauled', value: '42.8k' },
-  { title: 'Avg Payload/Rated', value: '98.2%' },
-  { title: 'Optimal Load %', value: '89%' },
-  { title: 'Avg Cycle Time', value: '33.1 min' },
-  { title: 'Total Idle Hours', value: '112 h' },
-];
+import { Loader2 } from 'lucide-react';
 
 const payloadDistributionData = [
   { payload: '80-85%', trucks: 5 },
@@ -54,26 +50,51 @@ const payloadDistributionData = [
   { payload: '>110%', trucks: 3 },
 ];
 
-const fleetData = [
-  { id: 'TRK-201', contractor: 'MACMAHON', util: 89, cycles: 22, avgPayload: 99.2, underload: 2, overload: 8, idle: 5 },
-  { id: 'TRK-203', contractor: 'Veralogix', util: 94, cycles: 24, avgPayload: 101.3, underload: 1, overload: 12, idle: 3 },
-  { id: 'TRK-205', contractor: 'Veralogix', util: 75, cycles: 18, avgPayload: 88.9, underload: 15, overload: 2, idle: 18 },
-  { id: 'TRK-310', contractor: 'MACMAHON', util: 91, cycles: 23, avgPayload: 97.5, underload: 5, overload: 5, idle: 6 },
-  { id: 'TRK-312', contractor: 'Veralogix', util: 82, cycles: 20, avgPayload: 105.1, underload: 0, overload: 25, idle: 11 },
-  { id: 'TRK-401', contractor: 'MACMAHON', util: 96, cycles: 25, avgPayload: 100.1, underload: 2, overload: 7, idle: 2 },
-];
-
-const queueTimeData = [
-    { point: 'Shovel 1', time: 4.2 },
-    { point: 'Shovel 2', time: 6.8 },
-    { point: 'Shovel 3', time: 3.1 },
-    { point: 'ROM Pad', time: 8.5 },
-];
-
-const efficientTrucks = ['TRK-401', 'TRK-203', 'TRK-310', 'TRK-201', 'TRK-115'];
-const problemTrucks = ['TRK-205', 'TRK-312', 'TRK-128', 'TRK-219', 'TRK-301'];
-
 export default function FleetPage() {
+  const firestore = useFirestore();
+
+  const passportsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'loadPassports'));
+  }, [firestore]);
+
+  const { data: passports, loading, error } = useCollection(passportsQuery);
+
+  const { kpis, fleetData } = useMemo(() => {
+    if (!passports) {
+      return { kpis: [], fleetData: [] };
+    }
+
+    const totalLoads = passports.length;
+    const completedLoads = passports.filter(p => p.status === 'Completed').length;
+    const inProgressLoads = passports.filter(p => p.status === 'In Progress').length;
+    const exceptionLoads = passports.filter(p => p.status === 'Exception').length;
+    
+    // This is simplified logic. Real calculations would be more complex.
+    const fleetData = Array.from(new Set(passports.map(p => p.vehicleId)))
+      .map(vehicleId => {
+        const vehiclePassports = passports.filter(p => p.vehicleId === vehicleId);
+        return {
+          id: vehicleId,
+          contractor: Math.random() > 0.5 ? 'Veralogix' : 'MACMAHON', // Mock
+          util: 80 + Math.floor(Math.random() * 20), // Mock
+          cycles: vehiclePassports.length,
+          avgPayload: 95 + Math.random() * 10, // Mock
+          idle: 5 + Math.floor(Math.random() * 10), // Mock
+        };
+      });
+
+    const kpisData = [
+      { title: 'Total Loads', value: `${totalLoads}` },
+      { title: 'Completed Loads', value: `${completedLoads}` },
+      { title: 'In Progress', value: `${inProgressLoads}` },
+      { title: 'Exceptions', value: `${exceptionLoads}` },
+      { title: 'Active Trucks', value: `${fleetData.length}` },
+    ];
+
+    return { kpis: kpisData, fleetData };
+  }, [passports]);
+
   return (
     <div className="space-y-6">
       <header>
@@ -114,20 +135,27 @@ export default function FleetPage() {
       </Card>
 
       {/* Top KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-        {kpis.map((kpi) => (
-          <Card key={kpi.title} className="card-hover text-center">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {kpi.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold font-headline">{kpi.value}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+       {loading ? (
+          <div className="flex justify-center items-center h-24">
+            <Loader2 className="size-8 animate-spin text-primary" />
+          </div>
+       ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {kpis.map((kpi) => (
+              <Card key={kpi.title} className="card-hover text-center">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    {kpi.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold font-headline">{kpi.value}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+       )}
+
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1 space-y-6">
@@ -156,32 +184,40 @@ export default function FleetPage() {
               <CardTitle>Fleet Performance</CardTitle>
             </CardHeader>
             <CardContent className="px-0">
-              <div className="overflow-y-auto max-h-[17rem]">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Truck ID</TableHead>
-                      <TableHead>Contractor</TableHead>
-                      <TableHead>Util %</TableHead>
-                      <TableHead>Cycles</TableHead>
-                      <TableHead>Avg Payload %</TableHead>
-                      <TableHead>Idle %</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {fleetData.map((truck) => (
-                      <TableRow key={truck.id} className="hover:bg-secondary/50">
-                        <TableCell className="font-mono text-xs">{truck.id}</TableCell>
-                        <TableCell>{truck.contractor}</TableCell>
-                        <TableCell>{truck.util}%</TableCell>
-                        <TableCell>{truck.cycles}</TableCell>
-                        <TableCell>{truck.avgPayload}%</TableCell>
-                        <TableCell>{truck.idle}%</TableCell>
+               {loading ? (
+                <div className="flex justify-center items-center h-48">
+                  <Loader2 className="size-8 animate-spin text-primary" />
+                </div>
+               ) : error ? (
+                 <p className="text-destructive text-center p-4">Error loading fleet data.</p>
+               ) : (
+                <div className="overflow-y-auto max-h-[17rem]">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Truck ID</TableHead>
+                        <TableHead>Contractor</TableHead>
+                        <TableHead>Util %</TableHead>
+                        <TableHead>Cycles</TableHead>
+                        <TableHead>Avg Payload %</TableHead>
+                        <TableHead>Idle %</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {fleetData.map((truck) => (
+                        <TableRow key={truck.id} className="hover:bg-secondary/50">
+                          <TableCell className="font-mono text-xs">{truck.id}</TableCell>
+                          <TableCell>{truck.contractor}</TableCell>
+                          <TableCell>{truck.util}%</TableCell>
+                          <TableCell>{truck.cycles}</TableCell>
+                          <TableCell>{truck.avgPayload.toFixed(1)}%</TableCell>
+                          <TableCell>{truck.idle}%</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+               )}
             </CardContent>
           </Card>
         </div>
