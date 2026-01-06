@@ -9,7 +9,7 @@ import { ProcessUnitDetailsCard } from "./components/process-unit-details-card";
 import { TailingsRiskCard } from "./components/tailings-risk-card";
 import type { PlantUnit } from "./components/process-flow-band";
 import { BlastingSection } from "./components/blasting-section";
-import { DrillAndBlastSection } from "./components/drill-blast-section";
+import { DrillAndBlastSection } from "./components/drill-and-blast-section";
 import { StockpileManagementSection } from "./components/stockpile-management-section";
 
 export default function PlantPage() {
