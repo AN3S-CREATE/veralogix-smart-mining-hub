@@ -59,8 +59,12 @@ export function EventTimelineCard() {
     }
 
     alerts.forEach(alert => {
+        // Firebase timestamps can be null if data is not yet synced from server.
+        if (!alert.createdAt) return;
+
         const alertDate = alert.createdAt.toDate();
         const formattedDate = format(alertDate, 'E');
+
         if (dailyData[formattedDate] && alert.severity) {
             const severity = alert.severity as keyof typeof chartConfig;
             if (dailyData[formattedDate][severity] !== undefined) {
