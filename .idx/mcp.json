@@ -10,13 +10,20 @@
         "--only",
         "auth,firestore"
       ]
-    }
-  }
-},
+    },
     "project": {
       "command": "npm",
       "args": [
         "run",
         "start"
       ]
+    },
+    "nextjs": {
+      "command": "npm",
+      "args": [
+        "run",
+        "dev"
+      ]
     }
+  }
+}

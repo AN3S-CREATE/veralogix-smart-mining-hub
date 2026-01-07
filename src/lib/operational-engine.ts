@@ -7,7 +7,7 @@ import type { Firestore } from 'firebase/firestore';
 // In a real app, tenantId would come from the user's session or a global state.
 const MOCK_TENANT_ID = "veralogix-pilbara";
 
-type AlertSeverity = "Low" | "Medium" | "High" | "Critical";
+export type AlertSeverity = "Low" | "Medium" | "High" | "Critical" | "Warning" | "Info";
 
 interface AlertData {
     moduleKey: string;
