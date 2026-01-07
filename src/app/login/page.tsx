@@ -74,7 +74,7 @@ export default function LoginPage() {
                         fill
                         objectFit="cover"
                         quality={100}
-                        priority
+                        loading="lazy"
                     />
                 )}
             </div>
@@ -90,6 +90,7 @@ export default function LoginPage() {
                                         data-ai-hint={loginLogo.imageHint}
                                         width={loginLogo.width} 
                                         height={loginLogo.height}
+                                        priority
                                     />
                                 )}
                             </div>
