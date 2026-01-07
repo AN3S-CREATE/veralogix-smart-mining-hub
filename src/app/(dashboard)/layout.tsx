@@ -4,7 +4,6 @@ import { AppSidebar } from "@/components/global/app-sidebar";
 import { Header } from "@/components/global/header";
 import { OfflineBanner } from "@/components/shared/offline-banner";
 import { PageLoader } from "@/components/global/page-loader";
-import { Suspense } from "react";
 import { FirebaseClientProvider } from "@/firebase";
 
 export default function DashboardLayout({
