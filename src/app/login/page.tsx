@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, memo } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,7 +32,7 @@ const RoleButton = memo(({ role, onSelect }: { role: Role, onSelect: (role: Role
     return (
         <button
             onClick={() => onSelect(role)}
-            className="w-full text-left p-3 rounded-lg bg-[#252222] border border-[#4A4747] hover:border-primary hover:shadow-lg hover:-translate-y-0.5 transition-all group h-full"
+            className="w-full text-left p-3 rounded-lg bg-[#252222] border border-[#4A4747] hover:border-primary hover:shadow-lg hover:-translate-y-0.5 transition-all group h-full min-h-[72px]"
         >
             <div className="flex items-center gap-3">
                 <div className="p-2 bg-[#1E1C1C] rounded-md border border-[#4A4747] group-hover:border-primary transition-colors">
@@ -52,10 +52,18 @@ RoleButton.displayName = 'RoleButton';
 export default function LoginPage() {
     const router = useRouter();
     const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+    const [isNavigating, setIsNavigating] = useState(false);
+
+    useEffect(() => {
+        roles.forEach(role => {
+            router.prefetch(role.href);
+        });
+    }, [router]);
 
     const handleSignIn = (e: React.FormEvent) => {
         e.preventDefault();
         if (selectedRole) {
+            setIsNavigating(true);
             router.push(selectedRole.href);
         }
     }
@@ -90,6 +98,7 @@ export default function LoginPage() {
                                         data-ai-hint={loginLogo.imageHint}
                                         width={loginLogo.width} 
                                         height={loginLogo.height}
+                                        className="h-16 sm:h-20 w-auto object-contain"
                                     />
                                 )}
                             </div>
@@ -125,8 +134,12 @@ export default function LoginPage() {
                                                 <Label htmlFor="password">Password</Label>
                                                 <Input id="password" type="password" placeholder="••••••••" defaultValue="password" className="bg-[#252222] border-[#4A4747] text-white" />
                                             </div>
-                                            <Button type="submit" className="w-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 h-10 text-base !mt-4">
-                                                Sign In as {selectedRole.title.split(' ')[0]}
+                                            <Button
+                                                type="submit"
+                                                className="w-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 h-10 text-base !mt-4"
+                                                disabled={isNavigating}
+                                            >
+                                                {isNavigating ? 'Signing In...' : `Sign In as ${selectedRole.title.split(' ')[0]}`}
                                             </Button>
                                         </form>
                                     </div>
