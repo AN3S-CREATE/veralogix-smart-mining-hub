@@ -72,14 +72,14 @@ export default function LoginPage() {
                         alt={loginBg.description}
                         data-ai-hint={loginBg.imageHint}
                         fill
-                        objectFit="cover"
+                        style={{objectFit:"cover"}}
                         quality={100}
                         loading="lazy"
                     />
                 )}
             </div>
             <main className="relative min-h-screen w-full flex justify-center items-center p-4 sm:p-8">
-                 <div className="w-full max-w-6xl">
+                 <div className="w-full max-w-[90rem]">
                     <Card className="w-full bg-[#1E1C1C]/80 backdrop-blur-sm border-[#4A4747] text-white overflow-hidden">
                         <CardContent className="p-6 lg:p-8 flex flex-col items-center">
                              <div className="flex justify-center mb-4">
