@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { onSnapshot, type DocumentReference, type DocumentData, type FirestoreError } from 'firebase/firestore';
 
+type WithId<T> = T & { id: string };
+
 export function useDoc<T = DocumentData>(ref: DocumentReference<T> | null) {
-  const [data, setData] = useState<T | null>(null);
+  const [data, setData] = useState<WithId<T> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<FirestoreError | null>(null);
 

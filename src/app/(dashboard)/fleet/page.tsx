@@ -7,7 +7,6 @@ import { collection, query } from 'firebase/firestore';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -84,21 +83,28 @@ export default function FleetPage() {
     const inProgressLoads = passports.filter(p => p.status === 'In Progress').length;
     const exceptionLoads = passports.filter(p => p.status === 'Exception').length;
     
+    const groupedPassports = passports.reduce((acc, passport) => {
+      const vehicleId = passport.vehicleId;
+      if (!acc.has(vehicleId)) {
+        acc.set(vehicleId, []);
+      }
+      acc.get(vehicleId)!.push(passport);
+      return acc;
+    }, new Map<string, typeof passports>());
+
     // This is simplified logic. Real calculations would be more complex.
-    const fleetData = Array.from(new Set(passports.map(p => p.vehicleId)))
-      .map(vehicleId => {
-        const vehiclePassports = passports.filter(p => p.vehicleId === vehicleId);
-        const hash = hashCode(vehicleId);
-        
-        return {
-          id: vehicleId,
-          contractor: (hash % 2 === 0) ? 'Veralogix' : 'MACMAHON',
-          util: 80 + (hash % 21), // 80-100
-          cycles: vehiclePassports.length,
-          avgPayload: 95 + (hash % 11), // 95-105
-          idle: 5 + (hash % 16), // 5-20
-        };
-      });
+    const fleetData = Array.from(groupedPassports.entries()).map(([vehicleId, vehiclePassports]) => {
+      const hash = hashCode(vehicleId);
+
+      return {
+        id: vehicleId,
+        contractor: (hash % 2 === 0) ? 'Veralogix' : 'MACMAHON',
+        util: 80 + (hash % 21), // 80-100
+        cycles: vehiclePassports.length,
+        avgPayload: 95 + (hash % 11), // 95-105
+        idle: 5 + (hash % 16), // 5-20
+      };
+    });
 
     const kpisData = [
       { title: 'Total Loads', value: `${totalLoads}` },
@@ -121,6 +127,17 @@ export default function FleetPage() {
           Vehicle loading, tracking, and quality control.
         </p>
       </header>
+      
+      {error && (
+        <Card className="border-destructive">
+          <CardHeader>
+            <CardTitle className="text-destructive">Data Load Error</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">{error.message}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Filter Bar */}
       <Card>
