@@ -79,7 +79,7 @@ export default function LoginPage() {
                 )}
             </div>
             <main className="relative min-h-screen w-full flex justify-center items-center p-4 sm:p-8">
-                 <div className="w-full max-w-4xl">
+                 <div className="w-full max-w-6xl">
                     <Card className="w-full bg-[#1E1C1C]/80 backdrop-blur-sm border-[#4A4747] text-white overflow-hidden">
                         <CardContent className="p-6 lg:p-8 flex flex-col items-center">
                              <div className="flex justify-center mb-4">
