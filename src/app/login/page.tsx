@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, memo } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +12,8 @@ import { HardHat, Users, Briefcase, Home, ArrowLeft } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from '@/firebase/provider';
 
 
 interface Role {
@@ -26,13 +28,14 @@ const roles: Role[] = [
     { title: "Supervisor Portal", description: "Control room overview", href: "/supervisor", icon: Users },
     { title: "Executive Portal", description: "Strategic site summary", href: "/executive", icon: Briefcase },
     { title: "Smart Hub / Admin", description: "Full operational access", href: "/hub", icon: Home },
+    { title: "Smart People", description: "User and role management", href: "/people/overview", icon: Users },
 ];
 
 const RoleButton = memo(({ role, onSelect }: { role: Role, onSelect: (role: Role) => void }) => {
     return (
         <button
             onClick={() => onSelect(role)}
-            className="w-full text-left p-3 rounded-lg bg-[#252222] border border-[#4A4747] hover:border-primary hover:shadow-lg hover:-translate-y-0.5 transition-all group h-full"
+            className="w-full text-left p-3 rounded-lg bg-[#252222] border border-[#4A4747] hover:border-primary hover:shadow-lg hover:-translate-y-0.5 transition-all group h-full min-h-[72px]"
         >
             <div className="flex items-center gap-3">
                 <div className="p-2 bg-[#1E1C1C] rounded-md border border-[#4A4747] group-hover:border-primary transition-colors">
@@ -51,12 +54,27 @@ RoleButton.displayName = 'RoleButton';
 
 export default function LoginPage() {
     const router = useRouter();
+    const auth = useAuth();
     const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSignIn = (e: React.FormEvent) => {
+    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (selectedRole) {
+        setError(null);
+
+        if (!selectedRole) {
+            return;
+        }
+
+        const form = e.currentTarget;
+        const email = form.email.value;
+        const password = form.password.value;
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
             router.push(selectedRole.href);
+        } catch {
+            setError('Invalid credentials. Please try again.');
         }
     }
     
@@ -72,7 +90,7 @@ export default function LoginPage() {
                         alt={loginBg.description}
                         data-ai-hint={loginBg.imageHint}
                         fill
-                        style={{objectFit:"cover"}}
+                        style={{ objectFit: 'cover' }}
                         quality={100}
                         loading="lazy"
                     />
@@ -90,7 +108,7 @@ export default function LoginPage() {
                                         data-ai-hint={loginLogo.imageHint}
                                         width={loginLogo.width} 
                                         height={loginLogo.height}
-                                        priority
+                                        className="h-16 sm:h-20 w-auto object-contain"
                                     />
                                 )}
                             </div>
@@ -120,12 +138,15 @@ export default function LoginPage() {
                                         <form onSubmit={handleSignIn} className="space-y-2">
                                             <div className="space-y-1">
                                                 <Label htmlFor="email">Email</Label>
-                                                <Input id="email" type="email" placeholder="operator@company.com" defaultValue="operator@company.com" className="bg-[#252222] border-[#4A4747] text-white" />
+                                                <Input id="email" name="email" type="email" placeholder="operator@company.com" className="bg-[#252222] border-[#4A4747] text-white" />
                                             </div>
                                             <div className="space-y-1">
                                                 <Label htmlFor="password">Password</Label>
-                                                <Input id="password" type="password" placeholder="••••••••" defaultValue="password" className="bg-[#252222] border-[#4A4747] text-white" />
+                                                <Input id="password" name="password" type="password" placeholder="••••••••" className="bg-[#252222] border-[#4A4747] text-white" />
                                             </div>
+                                            {error && (
+                                                <p className="text-sm text-red-400">{error}</p>
+                                            )}
                                             <Button type="submit" className="w-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 h-10 text-base !mt-4">
                                                 Sign In as {selectedRole.title.split(' ')[0]}
                                             </Button>
