@@ -144,7 +144,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     title: "Smart People",
     description: "Compliance, training, and operator performance.",
     icon: Users,
-    href: "/compliance",
+    href: "/people/overview",
     status: "OK",
     kpis: [
       { label: "Compliance %", value: "98.7%" },

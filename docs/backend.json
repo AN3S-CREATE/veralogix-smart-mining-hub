@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -237,75 +238,75 @@
     }
   },
   "auth": {
-    "providers": ["password"]
+    "providers": ["anonymous"]
   },
   "firestore": {
     "/users": {
-      "schema": { "$ref": "#/backend/entities/User" },
+      "schema": { "$ref": "#/entities/User" },
       "description": "Collection of all application users."
     },
     "/roles": {
-      "schema": { "$ref": "#/backend/entities/Role" },
+      "schema": { "$ref": "#/entities/Role" },
       "description": "Collection of all roles."
     },
     "/permissions": {
-      "schema": { "$ref": "#/backend/entities/Permission" },
+      "schema": { "$ref": "#/entities/Permission" },
       "description": "Collection of all available permissions."
     },
     "/payslips": {
-      "schema": { "$ref": "#/backend/entities/Payslip" },
+      "schema": { "$ref": "#/entities/Payslip" },
       "description": "Collection of all employee payslips."
     },
     "/payrollRuns": {
-      "schema": { "$ref": "#/backend/entities/PayrollRun" },
+      "schema": { "$ref": "#/entities/PayrollRun" },
       "description": "Collection of all payroll runs."
     },
     "/payrollInputs": {
-      "schema": { "$ref": "#/backend/entities/PayrollInput" },
+      "schema": { "$ref": "#/entities/PayrollInput" },
       "description": "Collection of all payroll inputs."
     },
     "/paperlessConsents": {
-      "schema": { "$ref": "#/backend/entities/PaperlessConsent" },
+      "schema": { "$ref": "#/entities/PaperlessConsent" },
       "description": "Collection of all paperless consents."
     },
     "/formTemplates": {
-      "schema": { "$ref": "#/backend/entities/FormTemplate" },
+      "schema": { "$ref": "#/entities/FormTemplate" },
       "description": "Collection of all form templates."
     },
     "/formSubmissions": {
-      "schema": { "$ref": "#/backend/entities/FormSubmission" },
+      "schema": { "$ref": "#/entities/FormSubmission" },
       "description": "Collection of all form submissions."
     },
     "/employeeProfiles": {
-      "schema": { "$ref": "#/backend/entities/EmployeeProfile" },
+      "schema": { "$ref": "#/entities/EmployeeProfile" },
       "description": "Collection of all employee profiles."
     },
     "/trainingRecords": {
-      "schema": { "$ref": "#/backend/entities/TrainingRecord" },
+      "schema": { "$ref": "#/entities/TrainingRecord" },
       "description": "Collection of all training records."
     },
     "/alerts": {
-      "schema": { "$ref": "#/backend/entities/Alert" },
+      "schema": { "$ref": "#/entities/Alert" },
       "description": "Collection of all system-wide alerts."
     },
     "/tasks": {
-      "schema": { "$ref": "#/backend/entities/Task" },
+      "schema": { "$ref": "#/entities/Task" },
       "description": "Collection of all actionable tasks."
     },
     "/activityFeed": {
-      "schema": { "$ref": "#/backend/entities/ActivityFeedItem" },
+      "schema": { "$ref": "#/entities/ActivityFeedItem" },
       "description": "A global audit trail of system and user activities."
     },
     "/complianceItems": {
-      "schema": { "$ref": "#/backend/entities/ComplianceItem" },
+      "schema": { "$ref": "#/entities/ComplianceItem" },
       "description": "Collection of all compliance items."
     },
     "/loadPassports": {
-        "schema": { "$ref": "#/backend/entities/LoadPassport" },
+        "schema": { "$ref": "#/entities/LoadPassport" },
         "description": "Collection of all load passports, tracking the lifecycle of a haulage load."
     },
     "/loadPassports/{passportId}/loadEvents": {
-        "schema": { "$ref": "#/backend/entities/LoadEvent" },
+        "schema": { "$ref": "#/entities/LoadEvent" },
         "description": "Subcollection of events for a specific load passport."
     }
   }

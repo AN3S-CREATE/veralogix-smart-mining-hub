@@ -14,7 +14,7 @@ import {
   SidebarSeparator,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Home, FileText, Settings, AlertTriangle, CheckSquare, Package, UserCog } from "lucide-react";
+import { Home, FileText, Settings, AlertTriangle, CheckSquare, Package, UserCog, Users } from "lucide-react";
 import { serviceCatalog, type UserRole } from "@/lib/service-catalog";
 import { ShiftHandoverAssistant } from "./shift-handover-assistant";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -49,6 +49,12 @@ export function AppSidebar() {
   const generalMenuItems = [
     { href: "/reports", label: "Reports", icon: FileText },
     { href: "/sensors", label: "Sensor Stack", icon: Settings },
+  ];
+  
+  const peopleMenuItems = [
+    { href: "/people/overview", label: "People Overview", icon: Users },
+    { href: "/people/me", label: "My Profile", icon: UserCog },
+    { href: "/people/me/payslips", label: "My Payslips", icon: FileText },
   ];
 
   const sidebarLogo = PlaceHolderImages.find(img => img.id === 'sidebar-logo');
@@ -105,16 +111,34 @@ export function AppSidebar() {
           </SidebarMenuItem>
 
           {uniqueMenuLinks.map((item) => (
+            item.id !== 'smart-people' && ( // Exclude the generic Smart People link
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton asChild isActive={pathname.startsWith(item.href)}>
+                  <Link href={item.href}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )
+          ))}
+          
+          <SidebarSeparator />
+          <SidebarMenuItem>
+            <p className="px-4 py-2 text-xs font-semibold text-muted-foreground">People</p>
+          </SidebarMenuItem>
+          {peopleMenuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton asChild isActive={pathname.startsWith(item.href)}>
+              <SidebarMenuButton asChild isActive={pathname === item.href}>
                 <Link href={item.href}>
                   <item.icon />
-                  <span>{item.title}</span>
+                  <span>{item.label}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
-          
+
+
           <SidebarSeparator />
 
            {generalMenuItems.map((item) => (

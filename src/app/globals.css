@@ -38,7 +38,7 @@
     --card-foreground: 0 0% 100%;
     --popover: 0 4% 11%;
     --popover-foreground: 0 0% 100%;
-    --primary: 76 100% 50%; /* #ABFF00 - Electric Lime */
+    --primary: 76 53% 63%; /* #BAD96B */
     --primary-foreground: 0 4% 11%;
     --secondary: 0 3% 14%; /* #252222 */
     --secondary-foreground: 0 0% 100%;
@@ -50,12 +50,12 @@
     --destructive-foreground: 0 0% 100%;
     --border: 0 2% 28%; /* #4A4747 */
     --input: 0 2% 28%;
-    --ring: 76 100% 50%;
-    --chart-1: 76 100% 50%;
-    --chart-2: 76 53% 63%;
+    --ring: 76 53% 63%;
+    --chart-1: 76 53% 63%; /* #BAD96B */
+    --chart-2: 75 59% 54%; /* #A8CF45 */
     --chart-3: 111 98% 51%; /* #2CFF05 */
     --chart-4: 115 99% 52%; /* #39FF14 */
-    --chart-5: 75 80% 19%; /* #455C08 */
+    --chart-5: 0 84% 60%; /* destructive */
     --sidebar-background: 0 4% 10%;
     --sidebar-foreground: 0 0% 100% / 0.7;
     --sidebar-border: 0 2% 20%;

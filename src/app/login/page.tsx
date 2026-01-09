@@ -5,7 +5,7 @@ import { useEffect, useState, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { HardHat, Users, Briefcase, Home, Loader2 } from "lucide-react";
+import { HardHat, Users, Briefcase, Home, Loader2, UserCog } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -25,7 +25,7 @@ const roles: Role[] = [
     { title: "Supervisor Portal", description: "Control room overview", href: "/supervisor", icon: Users },
     { title: "Executive Portal", description: "Strategic site summary", href: "/executive", icon: Briefcase },
     { title: "Smart Hub / Admin", description: "Full operational access", href: "/hub", icon: Home },
-    { title: "Smart People", description: "User and role management", href: "/people/overview", icon: Users },
+    { title: "Smart People", description: "HR, Payroll, and Admin", href: "/people/overview", icon: UserCog },
 ];
 
 export default function LoginPage() {
@@ -35,11 +35,18 @@ export default function LoginPage() {
     const [loadingRole, setLoadingRole] = useState<string | null>(null);
 
     const handleRoleSelect = async (role: Role) => {
+        if (!auth) {
+            toast({
+                title: "Authentication Error",
+                description: "Firebase Auth service is not available. Please try again later.",
+                variant: "destructive",
+            });
+            return;
+        }
+
         setLoadingRole(role.title);
         try {
             await signInAnonymously(auth);
-            // In a real app, you would set the user's role here via custom claims
-            // or a user profile document in Firestore.
             router.push(role.href);
         } catch (error) {
             console.error("Anonymous sign-in failed:", error);
@@ -66,7 +73,7 @@ export default function LoginPage() {
                         fill
                         style={{ objectFit: 'cover' }}
                         quality={100}
-                        loading="lazy"
+                        priority
                     />
                 )}
             </div>
