@@ -5,16 +5,13 @@ import { useEffect, useState, memo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { HardHat, Users, Briefcase, Home, ArrowLeft } from "lucide-react";
+import { HardHat, Users, Briefcase, Home, Loader2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInAnonymously } from 'firebase/auth';
 import { useAuth } from '@/firebase/provider';
-
+import { useToast } from '@/hooks/use-toast';
 
 interface Role {
     title: string;
@@ -31,52 +28,29 @@ const roles: Role[] = [
     { title: "Smart People", description: "User and role management", href: "/people/overview", icon: Users },
 ];
 
-const RoleButton = memo(({ role, onSelect }: { role: Role, onSelect: (role: Role) => void }) => {
-    return (
-        <button
-            onClick={() => onSelect(role)}
-            className="w-full text-left p-3 rounded-lg bg-[#252222] border border-[#4A4747] hover:border-primary hover:shadow-lg hover:-translate-y-0.5 transition-all group h-full min-h-[72px]"
-        >
-            <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#1E1C1C] rounded-md border border-[#4A4747] group-hover:border-primary transition-colors">
-                    <role.icon className="size-5 text-primary" />
-                </div>
-                <div>
-                    <p className="font-semibold text-white text-sm">{role.title}</p>
-                    <p className="text-xs text-neutral-400">{role.description}</p>
-                </div>
-            </div>
-        </button>
-    );
-});
-RoleButton.displayName = 'RoleButton';
-
-
 export default function LoginPage() {
     const router = useRouter();
     const auth = useAuth();
-    const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    const { toast } = useToast();
+    const [loadingRole, setLoadingRole] = useState<string | null>(null);
 
-    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setError(null);
-
-        if (!selectedRole) {
-            return;
-        }
-
-        const form = e.currentTarget;
-        const email = form.email.value;
-        const password = form.password.value;
-
+    const handleRoleSelect = async (role: Role) => {
+        setLoadingRole(role.title);
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            router.push(selectedRole.href);
-        } catch {
-            setError('Invalid credentials. Please try again.');
+            await signInAnonymously(auth);
+            // In a real app, you would set the user's role here via custom claims
+            // or a user profile document in Firestore.
+            router.push(role.href);
+        } catch (error) {
+            console.error("Anonymous sign-in failed:", error);
+            toast({
+                title: "Login Failed",
+                description: "Could not sign in. Please check your connection and try again.",
+                variant: "destructive",
+            });
+            setLoadingRole(null);
         }
-    }
+    };
     
     const loginLogo = PlaceHolderImages.find(img => img.id === 'login-logo');
     const loginBg = PlaceHolderImages.find(img => img.id === 'login-background');
@@ -97,7 +71,7 @@ export default function LoginPage() {
                 )}
             </div>
             <main className="relative min-h-screen w-full flex justify-center items-center p-4 sm:p-8">
-                 <div className="w-full max-w-[90rem]">
+                 <div className="w-full max-w-lg">
                     <Card className="w-full bg-[#1E1C1C]/80 backdrop-blur-sm border-[#4A4747] text-white overflow-hidden">
                         <CardContent className="p-6 lg:p-8 flex flex-col items-center">
                              <div className="flex justify-center mb-4">
@@ -114,45 +88,29 @@ export default function LoginPage() {
                             </div>
                             
                             <div className="w-full max-w-lg mx-auto">
-                                {!selectedRole ? (
-                                    <div>
-                                        <p className="text-center text-sm text-neutral-400 mb-4">Select your role to begin:</p>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                            {roles.map(role => (
-                                                <RoleButton key={role.title} role={role} onSelect={setSelectedRole} />
-                                            ))}
-                                        </div>
+                                <div>
+                                    <p className="text-center text-sm text-neutral-400 mb-4">Select your role to begin:</p>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {roles.map(role => (
+                                            <button
+                                                key={role.title}
+                                                onClick={() => handleRoleSelect(role)}
+                                                disabled={!!loadingRole}
+                                                className="w-full text-left p-3 rounded-lg bg-[#252222] border border-[#4A4747] hover:border-primary hover:shadow-lg hover:-translate-y-0.5 transition-all group h-full min-h-[72px] disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className="p-2 bg-[#1E1C1C] rounded-md border border-[#4A4747] group-hover:border-primary transition-colors">
+                                                        {loadingRole === role.title ? <Loader2 className="size-5 animate-spin text-primary" /> : <role.icon className="size-5 text-primary" />}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-semibold text-white text-sm">{role.title}</p>
+                                                        <p className="text-xs text-neutral-400">{role.description}</p>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        ))}
                                     </div>
-                                ) : (
-                                    <div>
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <Button variant="ghost" size="icon" className="text-neutral-400 hover:text-white hover:bg-white/10" onClick={() => setSelectedRole(null)}>
-                                                <ArrowLeft className="size-5" />
-                                            </Button>
-                                            <div>
-                                                <p className="font-semibold text-white">{selectedRole.title}</p>
-                                                <p className="text-xs text-neutral-400">Sign in to continue</p>
-                                            </div>
-                                        </div>
-                                        <Separator className="bg-[#4A4747] mb-4" />
-                                        <form onSubmit={handleSignIn} className="space-y-2">
-                                            <div className="space-y-1">
-                                                <Label htmlFor="email">Email</Label>
-                                                <Input id="email" name="email" type="email" placeholder="operator@company.com" className="bg-[#252222] border-[#4A4747] text-white" />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <Label htmlFor="password">Password</Label>
-                                                <Input id="password" name="password" type="password" placeholder="••••••••" className="bg-[#252222] border-[#4A4747] text-white" />
-                                            </div>
-                                            {error && (
-                                                <p className="text-sm text-red-400">{error}</p>
-                                            )}
-                                            <Button type="submit" className="w-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 h-10 text-base !mt-4">
-                                                Sign In as {selectedRole.title.split(' ')[0]}
-                                            </Button>
-                                        </form>
-                                    </div>
-                                )}
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
