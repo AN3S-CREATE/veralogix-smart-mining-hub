@@ -1,6 +1,165 @@
-
 {
   "entities": {
+    "User": {
+      "title": "User",
+      "description": "Represents an application user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "roleIds": { "type": "array", "items": { "type": "string" } },
+        "tenantId": { "type": "string" },
+        "siteId": { "type": "string" }
+      },
+      "required": ["uid", "email", "tenantId"]
+    },
+    "Role": {
+      "title": "Role",
+      "description": "A collection of permissions that can be assigned to users.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "permissions": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["name", "tenantId"]
+    },
+    "Permission": {
+      "title": "Permission",
+      "description": "A single action that can be permitted or denied.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" }
+      },
+      "required": ["id", "description", "category"]
+    },
+    "Payslip": {
+      "title": "Payslip",
+      "description": "Metadata for an individual employee payslip.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "uid": { "type": "string" },
+        "employeeId": { "type": "string" },
+        "payPeriod": { "type": "string" },
+        "issuedAt": { "type": "string", "format": "date-time" },
+        "storagePath": { "type": "string" },
+        "status": { "type": "string", "enum": ["available", "missing", "importError"] },
+        "readAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["tenantId", "uid", "payPeriod", "storagePath"]
+    },
+    "PayrollRun": {
+      "title": "Payroll Run",
+      "description": "Summary of a payroll import process.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "payPeriod": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "imported", "published", "closed"] },
+        "importedCount": { "type": "number" },
+        "matchedCount": { "type": "number" },
+        "unmatchedCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["tenantId", "payPeriod", "status"]
+    },
+    "PayrollInput": {
+      "title": "Payroll Input",
+      "description": "An input for payroll, such as overtime, requiring manager approval.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "uid": { "type": "string" },
+        "type": { "type": "string", "enum": ["overtime", "allowance", "shift", "standby"] },
+        "units": { "type": "number" },
+        "notes": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected", "finalized"] },
+        "submittedByUid": { "type": "string" },
+        "approvedByUid": { "type": "string" }
+      },
+      "required": ["tenantId", "uid", "type", "units", "status", "submittedByUid"]
+    },
+    "PaperlessConsent": {
+      "title": "Paperless Consent",
+      "description": "Records an employee's consent to receive documents electronically.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "uid": { "type": "string" },
+        "consentGiven": { "type": "boolean" },
+        "consentAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["tenantId", "uid", "consentGiven"]
+    },
+    "FormTemplate": {
+      "title": "Form Template",
+      "description": "A template for creating paperless HR forms.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "fieldsSchema": { "type": "object" }
+      },
+      "required": ["tenantId", "name"]
+    },
+    "FormSubmission": {
+      "title": "Form Submission",
+      "description": "A submitted instance of a paperless form.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "templateId": { "type": "string" },
+        "createdByUid": { "type": "string" },
+        "status": { "type": "string", "enum": ["submitted", "inReview", "approved", "rejected"] },
+        "data": { "type": "object" }
+      },
+      "required": ["tenantId", "templateId", "createdByUid", "status"]
+    },
+    "EmployeeProfile": {
+      "title": "Employee Profile",
+      "description": "Stores personal and work information about an employee.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "uid": { "type": "string" },
+        "employeeId": { "type": "string" },
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "position": { "type": "string" },
+        "department": { "type": "string" },
+        "site": { "type": "string" },
+        "contact": { "type": "object", "properties": { "phone": { "type": "string" }, "email": { "type": "string" } } }
+      },
+      "required": ["uid", "tenantId", "employeeId", "firstName", "lastName"]
+    },
+    "TrainingRecord": {
+      "title": "Training Record",
+      "description": "A record of an employee's training or certification.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "uid": { "type": "string" },
+        "courseName": { "type": "string" },
+        "status": { "type": "string", "enum": ["Compliant", "Expiring Soon", "Expired"] },
+        "expiryDate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["tenantId", "uid", "courseName", "status"]
+    },
     "Alert": {
       "title": "Alert",
       "description": "Represents a system-generated alert requiring attention.",
@@ -60,57 +219,6 @@
       },
       "required": ["type", "subject", "status"]
     },
-    "CapaAction": {
-      "title": "CAPA Action",
-      "description": "A Corrective and Preventive Action item.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "description": { "type": "string" },
-        "dueDate": { "type": "string", "format": "date-time" },
-        "status": { "type": "string", "enum": ["Open", "In Progress", "Closed"] }
-      },
-      "required": ["description", "dueDate", "status"]
-    },
-    "FleetInspection": {
-      "title": "Fleet Inspection",
-      "description": "Represents a scheduled or completed fleet inspection.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "assetId": { "type": "string" },
-        "inspectionType": { "type": "string" },
-        "dueDate": { "type": "string", "format": "date-time" },
-        "status": { "type": "string", "enum": ["Due", "Overdue", "Completed"] }
-      },
-      "required": ["assetId", "dueDate", "status"]
-    },
-    "DowntimeFlag": {
-      "title": "Downtime Flag",
-      "description": "A record of asset downtime.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "assetId": { "type": "string" },
-        "reason": { "type": "string" },
-        "startTime": { "type": "string", "format": "date-time" },
-        "endTime": { "type": "string", "format": "date-time" }
-      },
-      "required": ["assetId", "reason", "startTime"]
-    },
-    "LoadProof": {
-      "title": "Load Proof",
-      "description": "A record of a single haulage load.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "vehicleId": { "type": "string" },
-        "timestamp": { "type": "string", "format": "date-time" },
-        "payload": { "type": "number" },
-        "imageUrl": { "type": "string" }
-      },
-      "required": ["vehicleId", "timestamp", "payload"]
-    },
     "LoadPassport": {
         "title": "Load Passport",
         "description": "Represents the entire lifecycle of a single haulage load.",
@@ -126,155 +234,56 @@
             "lastUpdatedAt": { "type": "string", "format": "date-time" }
         },
         "required": ["passportId", "vehicleId", "materialType", "status", "origin", "destination", "createdAt"]
-    },
-    "LoadEvent": {
-        "title": "Load Event",
-        "description": "A single event in the timeline of a Load Passport.",
-        "type": "object",
-        "properties": {
-            "timestamp": { "type": "string", "format": "date-time" },
-            "eventType": { "type": "string", "enum": ["dispatch", "loadscan", "weighbridge", "route_update", "exception", "delivery"] },
-            "location": { "type": "string", "description": "Location where the event occurred." },
-            "summary": { "type": "string", "description": "A brief summary of the event." },
-            "details": { "type": "object", "description": "An object containing event-specific data (e.g., weight, speed, reason for exception)." }
-        },
-        "required": ["timestamp", "eventType", "summary"]
-    },
-    "ManagementKpi": {
-      "title": "Management KPI",
-      "description": "A high-level Key Performance Indicator for management.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "title": { "type": "string" },
-        "value": { "type": "string" },
-        "trend": { "type": "string", "enum": ["up", "down", "flat"] },
-        "period": { "type": "string", "enum": ["Weekly", "Monthly"] }
-      },
-      "required": ["title", "value", "trend", "period"]
-    },
-    "EnergyMetric": {
-      "title": "Energy Metric",
-      "description": "A record of energy consumption.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "timestamp": { "type": "string", "format": "date-time" },
-        "site": { "type": "string" },
-        "metricName": { "type": "string" },
-        "value": { "type": "number" },
-        "unit": { "type": "string" }
-      },
-      "required": ["timestamp", "site", "metricName", "value", "unit"]
-    },
-    "EnvironmentalDataPoint": {
-      "title": "Environmental Data Point",
-      "description": "A record of an environmental metric.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "timestamp": { "type": "string", "format": "date-time" },
-        "metricType": { "type": "string" },
-        "value": { "type": "number" },
-        "unit": { "type": "string" },
-        "complianceStatus": { "type": "string", "enum": ["Compliant", "Warning", "Breach"] }
-      },
-      "required": ["timestamp", "metricType", "value", "complianceStatus"]
-    },
-    "PredictiveModelOutput": {
-      "title": "Predictive Model Output",
-      "description": "An output from a predictive model.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "predictionDate": { "type": "string", "format": "date-time" },
-        "modelName": { "type": "string" },
-        "targetMetric": { "type": "string" },
-        "predictedValue": { "type": "number" },
-        "confidence": { "type": "number" },
-        "drivers": { "type": "array", "items": { "type": "string" }, "description": "Top drivers influencing the prediction." }
-      },
-      "required": ["predictionDate", "modelName", "predictedValue"]
-    },
-    "InventoryItem": {
-      "title": "Inventory Item",
-      "description": "A single item in the supply chain inventory.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "itemName": { "type": "string" },
-        "quantity": { "type": "number" },
-        "location": { "type": "string" },
-        "reorderPoint": { "type": "number" },
-        "isCritical": { "type": "boolean" }
-      },
-      "required": ["itemName", "quantity", "location"]
-    },
-     "BlastDesign": {
-      "title": "Blast Design",
-      "description": "A design for a mining blast operation.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "blastId": { "type": "string" },
-        "location": { "type": "string" },
-        "designDate": { "type": "string", "format": "date-time" },
-        "powderFactor": { "type": "number" },
-        "status": { "type": "string", "enum": ["Designed", "Drilled", "Charged", "Fired"] }
-      },
-      "required": ["blastId", "location", "designDate", "status"]
-    },
-    "DrillLog": {
-      "title": "Drill Log",
-      "description": "A log of a single drill hole for a blast.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "holeId": { "type": "string" },
-        "blastId": { "type": "string" },
-        "depth": { "type": "number" },
-        "location": { "type": "string" },
-        "timestamp": { "type": "string", "format": "date-time" }
-      },
-      "required": ["holeId", "blastId", "depth", "timestamp"]
-    },
-    "StockpileVolume": {
-      "title": "Stockpile Volume",
-      "description": "A measurement of a stockpile's volume and tonnage.",
-      "type": "object",
-      "properties": {
-        "id": { "type": "string" },
-        "stockpileName": { "type": "string" },
-        "measuredVolume": { "type": "number", "description": "Volume in cubic meters" },
-        "measuredTonnage": { "type": "number", "description": "Tonnage in metric tons" },
-        "surveyDate": { "type": "string", "format": "date-time" },
-        "surveyMethod": { "type": "string", "enum": ["Drone", "Manual", "Laser"] }
-      },
-      "required": ["stockpileName", "measuredTonnage", "surveyDate", "surveyMethod"]
-    },
-    "EvidenceFile": {
-        "title": "Evidence File",
-        "description": "A file uploaded as evidence, linked to another record.",
-        "type": "object",
-        "properties": {
-            "id": { "type": "string" },
-            "tenantId": { "type": "string" },
-            "linkedType": { "type": "string", "description": "The type of entity this evidence is linked to (e.g., 'capa', 'environmental')." },
-            "linkedId": { "type": "string", "description": "The ID of the entity this evidence is linked to." },
-            "storagePath": { "type": "string", "description": "The path to the file in Firebase Storage." },
-            "fileName": { "type": "string" },
-            "fileType": { "type": "string" },
-            "fileSize": { "type": "number" },
-            "capturedAt": { "type": "string", "format": "date-time" },
-            "tags": { "type": "array", "items": { "type": "string" } }
-        },
-        "required": ["tenantId", "linkedType", "linkedId", "storagePath", "fileName", "capturedAt"]
     }
   },
   "auth": {
-    "providers": ["anonymous"]
+    "providers": ["password"]
   },
   "firestore": {
+    "/users": {
+      "schema": { "$ref": "#/backend/entities/User" },
+      "description": "Collection of all application users."
+    },
+    "/roles": {
+      "schema": { "$ref": "#/backend/entities/Role" },
+      "description": "Collection of all roles."
+    },
+    "/permissions": {
+      "schema": { "$ref": "#/backend/entities/Permission" },
+      "description": "Collection of all available permissions."
+    },
+    "/payslips": {
+      "schema": { "$ref": "#/backend/entities/Payslip" },
+      "description": "Collection of all employee payslips."
+    },
+    "/payrollRuns": {
+      "schema": { "$ref": "#/backend/entities/PayrollRun" },
+      "description": "Collection of all payroll runs."
+    },
+    "/payrollInputs": {
+      "schema": { "$ref": "#/backend/entities/PayrollInput" },
+      "description": "Collection of all payroll inputs."
+    },
+    "/paperlessConsents": {
+      "schema": { "$ref": "#/backend/entities/PaperlessConsent" },
+      "description": "Collection of all paperless consents."
+    },
+    "/formTemplates": {
+      "schema": { "$ref": "#/backend/entities/FormTemplate" },
+      "description": "Collection of all form templates."
+    },
+    "/formSubmissions": {
+      "schema": { "$ref": "#/backend/entities/FormSubmission" },
+      "description": "Collection of all form submissions."
+    },
+    "/employeeProfiles": {
+      "schema": { "$ref": "#/backend/entities/EmployeeProfile" },
+      "description": "Collection of all employee profiles."
+    },
+    "/trainingRecords": {
+      "schema": { "$ref": "#/backend/entities/TrainingRecord" },
+      "description": "Collection of all training records."
+    },
     "/alerts": {
       "schema": { "$ref": "#/backend/entities/Alert" },
       "description": "Collection of all system-wide alerts."
@@ -291,22 +300,6 @@
       "schema": { "$ref": "#/backend/entities/ComplianceItem" },
       "description": "Collection of all compliance items."
     },
-    "/capaActions": {
-      "schema": { "$ref": "#/backend/entities/CapaAction" },
-      "description": "Collection of all corrective and preventive actions."
-    },
-    "/fleetInspections": {
-      "schema": { "$ref": "#/backend/entities/FleetInspection" },
-      "description": "Collection of all fleet inspections."
-    },
-    "/downtimeFlags": {
-      "schema": { "$ref": "#/backend/entities/DowntimeFlag" },
-      "description": "Collection of all asset downtime flags."
-    },
-    "/loadProofs": {
-      "schema": { "$ref": "#/backend/entities/LoadProof" },
-      "description": "Collection of all load proofs."
-    },
     "/loadPassports": {
         "schema": { "$ref": "#/backend/entities/LoadPassport" },
         "description": "Collection of all load passports, tracking the lifecycle of a haulage load."
@@ -314,42 +307,6 @@
     "/loadPassports/{passportId}/loadEvents": {
         "schema": { "$ref": "#/backend/entities/LoadEvent" },
         "description": "Subcollection of events for a specific load passport."
-    },
-    "/managementKpis": {
-      "schema": { "$ref": "#/backend/entities/ManagementKpi" },
-      "description": "Collection of all management KPIs."
-    },
-    "/energyMetrics": {
-      "schema": { "$ref": "#/backend/entities/EnergyMetric" },
-      "description": "Collection of energy consumption metrics."
-    },
-    "/environmentalData": {
-      "schema": { "$ref": "#/backend/entities/EnvironmentalDataPoint" },
-      "description": "Collection of environmental data points."
-    },
-    "/predictiveOutputs": {
-      "schema": { "$ref": "#/backend/entities/PredictiveModelOutput" },
-      "description": "Collection of predictive model outputs."
-    },
-    "/inventoryItems": {
-      "schema": { "$ref": "#/backend/entities/InventoryItem" },
-      "description": "Collection of supply chain inventory items."
-    },
-    "/blastDesigns": {
-      "schema": { "$ref": "#/backend/entities/BlastDesign" },
-      "description": "Collection of all blast designs."
-    },
-    "/drillLogs": {
-      "schema": { "$ref": "#/backend/entities/DrillLog" },
-      "description": "Collection of all drill logs."
-    },
-    "/stockpileVolumes": {
-      "schema": { "$ref": "#/backend/entities/StockpileVolume" },
-      "description": "Collection of all stockpile volume measurements."
-    },
-    "/evidenceFiles": {
-        "schema": { "$ref": "#/backend/entities/EvidenceFile" },
-        "description": "Collection of all evidence files linked to other records."
     }
   }
 }
