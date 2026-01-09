@@ -4,6 +4,7 @@ import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import { DashboardWidget } from './dashboard-widget';
 import { Loader2 } from 'lucide-react';
+import { useMemo } from 'react';
 
 export function EnergyWidget() {
   const firestore = useFirestore();

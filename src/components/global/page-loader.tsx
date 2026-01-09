@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import NProgress from 'nprogress';
 
-export function PageLoader() {
+function PageLoaderContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -12,15 +12,26 @@ export function PageLoader() {
     NProgress.done();
   }, [pathname, searchParams]);
 
+  return null;
+}
+
+export function PageLoader() {
   useEffect(() => {
     NProgress.configure({ showSpinner: false });
 
     const handleAnchorClick = (event: MouseEvent) => {
-      const targetUrl = (event.currentTarget as HTMLAnchorElement).href;
-      const currentUrl = window.location.href;
-      if (targetUrl !== currentUrl) {
-        NProgress.start();
-      }
+        // ... (rest of the logic)
+       const target = event.currentTarget as HTMLAnchorElement;
+       if (target.target === '_blank') return;
+       
+       // Basic check to see if it's an internal link
+       if (target.href.startsWith(window.location.origin)) {
+           const targetUrl = target.href;
+           const currentUrl = window.location.href;
+           if (targetUrl !== currentUrl) {
+                NProgress.start();
+           }
+       }
     };
 
     const handleMutation: MutationCallback = () => {
@@ -28,7 +39,7 @@ export function PageLoader() {
       anchorElements.forEach((anchor) => {
         const hasClickListener = (anchor as any)._hasClickListener;
         if (!hasClickListener) {
-          anchor.addEventListener('click', handleAnchorClick);
+          anchor.addEventListener('click', handleAnchorClick as any);
           (anchor as any)._hasClickListener = true;
         }
       });
@@ -38,18 +49,22 @@ export function PageLoader() {
     mutationObserver.observe(document, { childList: true, subtree: true });
 
     // Initial run
-    handleMutation([]);
+    handleMutation([], mutationObserver);
 
     return () => {
       mutationObserver.disconnect();
       // Clean up event listeners
       const anchorElements = document.querySelectorAll('a[href]');
       anchorElements.forEach((anchor) => {
-        anchor.removeEventListener('click', handleAnchorClick);
+        anchor.removeEventListener('click', handleAnchorClick as any);
         delete (anchor as any)._hasClickListener;
       });
     };
   }, []);
 
-  return null;
+  return (
+    <Suspense fallback={null}>
+        <PageLoaderContent />
+    </Suspense>
+  );
 }

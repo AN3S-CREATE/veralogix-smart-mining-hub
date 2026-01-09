@@ -1,6 +1,7 @@
 
 'use client';
 
+import { Suspense } from 'react';
 import {
   Select,
   SelectContent,
@@ -21,7 +22,7 @@ interface ModulePageLayoutProps {
   children: React.ReactNode;
 }
 
-export function ModulePageLayout({ title, description, children }: ModulePageLayoutProps) {
+function ModulePageLayoutContent({ title, description, children }: ModulePageLayoutProps) {
   return (
     <div className="space-y-6">
       <header>
@@ -62,5 +63,13 @@ export function ModulePageLayout({ title, description, children }: ModulePageLay
 
       {children}
     </div>
+  );
+}
+
+export function ModulePageLayout(props: ModulePageLayoutProps) {
+  return (
+    <Suspense fallback={<div>Loading layout...</div>}>
+      <ModulePageLayoutContent {...props} />
+    </Suspense>
   );
 }

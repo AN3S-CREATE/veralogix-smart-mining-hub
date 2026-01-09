@@ -7,7 +7,7 @@ const kpis = [
   { title: "Plant Throughput", value: "850", unit: "t/h", trend: "up" as const, trendValue: "+2% vs target" },
   { title: "Recovery / Yield", value: "91.3", unit: "%", trend: "flat" as const, trendValue: "Stable" },
   { title: "Plant Sensor Coverage", value: "79", unit: "%", trend: "down" as const, trendValue: "3 sensors offline" },
-  { title: "Sentry-AI™ Plant Risk", value: "58", unit: "/100", trend: "up" as const, trendValue: "Increased risk detected" },
+  { title: "NeuroLogix™ Plant Risk", value: "58", unit: "/100", trend: "up" as const, trendValue: "Increased risk detected" },
 ];
 
 export function PlantKpiGrid() {
