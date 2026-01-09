@@ -20,7 +20,7 @@ export const PlaceHolderImages: ImagePlaceholder[] = [
     {
         id: 'login-logo',
         description: 'The main logo displayed on the login page.',
-        imageUrl: '/veralogix-logo.png',
+        imageUrl: 'https://picsum.photos/seed/veralogix-logo/420/69',
         imageHint: 'company logo',
         width: 420,
         height: 69
@@ -28,7 +28,7 @@ export const PlaceHolderImages: ImagePlaceholder[] = [
     {
         id: 'sidebar-logo',
         description: 'The Veralogix logo displayed in the main application sidebar.',
-        imageUrl: '/veralogix-logo.png',
+        imageUrl: 'https://picsum.photos/seed/sidebar-logo/192/31',
         imageHint: 'company logo',
         width: 192,
         height: 31,
@@ -36,7 +36,7 @@ export const PlaceHolderImages: ImagePlaceholder[] = [
      {
         id: 'login-background',
         description: 'A background image of professional mining equipment.',
-        imageUrl: '/background.png',
+        imageUrl: 'https://picsum.photos/seed/login-background/1920/1080',
         imageHint: 'mining equipment'
     }
 ];
