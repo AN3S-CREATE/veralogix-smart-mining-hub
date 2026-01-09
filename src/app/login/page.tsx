@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, memo } from 'react';
@@ -9,8 +10,10 @@ import type { LucideIcon } from "lucide-react";
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { signInAnonymously } from 'firebase/auth';
-import { useAuth } from '@/firebase/provider';
+import { useAuth } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { FirebaseClientProvider } from '@/firebase';
+
 
 interface Role {
     title: string;
@@ -27,7 +30,7 @@ const roles: Role[] = [
     { title: "Smart People", description: "HR, Payroll, and Admin", href: "/people/overview", icon: UserCog },
 ];
 
-export default function LoginPage() {
+function LoginPageContent() {
     const router = useRouter();
     const auth = useAuth();
     const { toast } = useToast();
@@ -127,4 +130,13 @@ export default function LoginPage() {
             </main>
         </>
     );
+}
+
+
+export default function LoginPage() {
+    return (
+        <FirebaseClientProvider>
+            <LoginPageContent />
+        </FirebaseClientProvider>
+    )
 }

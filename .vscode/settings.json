@@ -5,5 +5,6 @@
     "geminicodeassist.inlineSuggestions.nextEditPredictions": true,
     "geminicodeassist.updateChannel": "Default",
     "geminicodeassist.verboseLogging": false,
-    "diffEditor.codeLens": true
+    "diffEditor.codeLens": true,
+    "IDX.agenticWorkspace": true
 }
