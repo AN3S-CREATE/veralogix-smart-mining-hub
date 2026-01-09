@@ -156,6 +156,53 @@ function generateTrainingRecords() {
     ];
 }
 
+function generateAlerts() {
+    const now = new Date();
+    return [
+        { moduleKey: 'plant', severity: 'Critical', description: 'Conveyor C-12 motor temperature exceeding limits.', status: 'New', createdAt: admin.firestore.Timestamp.fromDate(subMinutes(now, 15)) },
+        { moduleKey: 'fleet', severity: 'High', description: 'Truck T-78 reported brake warning.', status: 'New', createdAt: admin.firestore.Timestamp.fromDate(subMinutes(now, 45)) },
+        { moduleKey: 'safety', severity: 'Medium', description: 'Speed violation in Zone B.', status: 'Investigating', createdAt: admin.firestore.Timestamp.fromDate(subHours(now, 2)) },
+    ];
+}
+
+function generateTasks() {
+    const now = new Date();
+    return [
+        { moduleKey: 'safety', taskType: 'CAPA', description: 'Investigate spill at refueling station.', status: 'Todo', dueDate: formatISO(addDays(now, 2)), assignee: 'Supervisor A' },
+        { moduleKey: 'fleet', taskType: 'Inspection', description: 'Routine inspection for T-78.', status: 'Todo', dueDate: formatISO(addDays(now, 1)), assignee: 'Mechanic B' },
+    ];
+}
+
+function generateLoadPassports() {
+    const now = new Date();
+    return [
+        { passportId: 'LP-2024-001', vehicleId: 'TRK-101', materialType: 'Iron Ore', origin: 'Pit A', destination: 'Crusher', status: 'Completed', createdAt: admin.firestore.Timestamp.fromDate(subHours(now, 4)), lastUpdatedAt: formatISO(subHours(now, 3)) },
+        { passportId: 'LP-2024-002', vehicleId: 'TRK-102', materialType: 'Iron Ore', origin: 'Pit B', destination: 'Stockpile', status: 'In Progress', createdAt: admin.firestore.Timestamp.fromDate(subMinutes(now, 20)), lastUpdatedAt: formatISO(subMinutes(now, 5)) },
+        { passportId: 'LP-2024-003', vehicleId: 'TRK-103', materialType: 'Waste', origin: 'Pit A', destination: 'Dump 2', status: 'Exception', createdAt: admin.firestore.Timestamp.fromDate(subHours(now, 1)), lastUpdatedAt: formatISO(subMinutes(now, 45)) },
+    ];
+}
+
+function generateBlastDesigns() {
+    return [
+        { blastId: 'B-07-N1', location: 'Pit B North Wall', designDate: formatISO(new Date()), powderFactor: 0.85, status: 'Designed' },
+        { blastId: 'B-07-S2', location: 'Pit B South Wall', designDate: formatISO(subDays(new Date(), 1)), powderFactor: 0.92, status: 'Charged' },
+    ];
+}
+
+function generateDrillLogs() {
+    return [
+        { holeId: 'H-1001', blastId: 'B-07-N1', depth: 15.2, location: '-22.123, 118.456', timestamp: formatISO(new Date()) },
+        { holeId: 'H-1002', blastId: 'B-07-N1', depth: 14.8, location: '-22.123, 118.457', timestamp: formatISO(new Date()) },
+    ];
+}
+
+function generateStockpiles() {
+    return [
+        { stockpileName: 'ROM Pad A', measuredVolume: 12500, measuredTonnage: 31250, surveyDate: formatISO(new Date()), surveyMethod: 'Drone' },
+        { stockpileName: 'Product Stockpile', measuredVolume: 8000, measuredTonnage: 20000, surveyDate: formatISO(new Date()), surveyMethod: 'Scanner' },
+    ];
+}
+
 
 // --- Main Execution ---
 
@@ -171,6 +218,12 @@ async function main() {
     await clearCollection('paperlessConsents');
     await clearCollection('employeeProfiles');
     await clearCollection('trainingRecords');
+    await clearCollection('alerts');
+    await clearCollection('tasks');
+    await clearCollection('loadPassports');
+    await clearCollection('blastDesigns');
+    await clearCollection('drillLogs');
+    await clearCollection('stockpileVolumes');
     
     // Generate new data
     const users = generateUsers();
@@ -179,6 +232,12 @@ async function main() {
     const consents = generatePaperlessConsents();
     const profiles = generateEmployeeProfiles();
     const training = generateTrainingRecords();
+    const alerts = generateAlerts();
+    const tasks = generateTasks();
+    const passports = generateLoadPassports();
+    const blasts = generateBlastDesigns();
+    const drillLogs = generateDrillLogs();
+    const stockpiles = generateStockpiles();
 
     // Seed collections with new data
     await seedCollection('users', users, 'uid');
@@ -188,6 +247,12 @@ async function main() {
     await seedCollection('paperlessConsents', consents, 'uid');
     await seedCollection('employeeProfiles', profiles, 'uid');
     await seedCollection('trainingRecords', training);
+    await seedCollection('alerts', alerts);
+    await seedCollection('tasks', tasks);
+    await seedCollection('loadPassports', passports, 'passportId');
+    await seedCollection('blastDesigns', blasts);
+    await seedCollection('drillLogs', drillLogs);
+    await seedCollection('stockpileVolumes', stockpiles);
 
     console.log('\n✅ Database seeding completed successfully!');
   } catch (error) {
