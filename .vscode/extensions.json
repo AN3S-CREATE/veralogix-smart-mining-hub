@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "GitHub.vscode-pull-request-github",
-        "google.geminicodeassist"
+        "google.geminicodeassist",
+        "codeium.windsurfpyright"
     ]
 }
