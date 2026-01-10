@@ -1,0 +1,55 @@
+name: Capture App Screenshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Base URL of the live app (e.g. https://your-app-url.com)"
+        required: true
+      sitemap_url:
+        description: "Optional sitemap URL to seed routes"
+        required: false
+      routes_file:
+        description: "Optional path to a routes file within the repo"
+        required: false
+      max_pages:
+        description: "Maximum pages to capture"
+        required: false
+        default: "200"
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ inputs.base_url }}
+      SITEMAP_URL: ${{ inputs.sitemap_url }}
+      ROUTES_FILE: ${{ inputs.routes_file }}
+      MAX_PAGES: ${{ inputs.max_pages }}
+      OUTPUT_DIR: screenshots
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture screenshots
+        run: npm run screenshots:capture
+
+      - name: Create zip archive
+        run: zip -r screenshots.zip screenshots
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-screenshots
+          path: screenshots.zip
