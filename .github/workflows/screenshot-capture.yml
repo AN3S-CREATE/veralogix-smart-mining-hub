@@ -1,5 +1,4 @@
 name: Capture App Screenshots
-run-name: Capture screenshots
 
 on:
   workflow_dispatch:
@@ -23,7 +22,6 @@ on:
 
 jobs:
   capture:
-    name: Capture screenshots
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
