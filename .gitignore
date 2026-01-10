@@ -39,3 +39,7 @@ next-env.d.ts
 
 # firebase
 service-account.json
+
+# screenshots
+/screenshots
+screenshots.zip

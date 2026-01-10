@@ -1,0 +1,72 @@
+name: Capture App Screenshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Base URL of the live app (e.g. https://your-app-url.com)"
+        required: false
+        default: ""
+      sitemap_url:
+        description: "Optional sitemap URL to seed routes"
+        required: false
+        default: ""
+      routes_file:
+        description: "Optional path to a routes file within the repo"
+        required: false
+        default: ""
+      max_pages:
+        description: "Maximum pages to capture"
+        required: false
+        default: "200"
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve screenshot config
+        env:
+          BASE_URL_INPUT: ${{ inputs.base_url }}
+          BASE_URL_VAR: ${{ vars.APP_BASE_URL }}
+          BASE_URL_SECRET: ${{ secrets.APP_BASE_URL }}
+          SITEMAP_URL_INPUT: ${{ inputs.sitemap_url }}
+          ROUTES_FILE_INPUT: ${{ inputs.routes_file }}
+          MAX_PAGES_INPUT: ${{ inputs.max_pages }}
+        run: |
+          BASE_URL="${BASE_URL_INPUT:-${BASE_URL_VAR:-${BASE_URL_SECRET}}}"
+          if [ -z "${BASE_URL}" ]; then
+            echo "BASE_URL is required. Provide workflow input 'base_url' or set repo variable APP_BASE_URL (or secret APP_BASE_URL)." >&2
+            exit 1
+          fi
+          echo "BASE_URL=${BASE_URL}" >> "$GITHUB_ENV"
+          echo "SITEMAP_URL=${SITEMAP_URL_INPUT}" >> "$GITHUB_ENV"
+          echo "ROUTES_FILE=${ROUTES_FILE_INPUT}" >> "$GITHUB_ENV"
+          echo "MAX_PAGES=${MAX_PAGES_INPUT}" >> "$GITHUB_ENV"
+          echo "OUTPUT_DIR=screenshots" >> "$GITHUB_ENV"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture screenshots
+        run: npm run screenshots:capture
+
+      - name: Create zip archive
+        run: zip -r screenshots.zip screenshots
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-screenshots
+          path: screenshots.zip
