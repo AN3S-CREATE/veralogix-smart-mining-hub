@@ -48,14 +48,9 @@ Lines starting with `#` are ignored.
 
 ## GitHub Actions workflow
 
-Trigger the workflow manually from **Actions → Capture App Screenshots**. You can either:
+Trigger the workflow manually from **Actions → Capture App Screenshots** and provide:
 
-- set the repository variable **`APP_BASE_URL`** once in **Settings → Variables**, or
-- provide the **base_url** input when starting the workflow.
-
-Optional inputs:
-
-- **base_url** (optional if `APP_BASE_URL` is set)
+- **base_url** (required)
 - **sitemap_url** (optional)
 - **routes_file** (optional, e.g., `docs/routes.txt`)
 - **max_pages** (optional)
