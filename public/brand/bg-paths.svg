@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" fill="none">
+  <path stroke="#D2FF05" stroke-opacity=".15" stroke-width="2" d="M0 550h100l50-50h150l50 50h450" filter="url(#glow)"/>
+  <path stroke="#D2FF05" stroke-opacity=".1" stroke-width="1" d="M0 300h200l50-30h100l80 30h370"/>
+  <defs>
+    <filter id="glow" x="-4" y="-4" width="808" height="608" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+</svg>

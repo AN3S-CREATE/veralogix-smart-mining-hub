@@ -13,6 +13,7 @@ import { signInAnonymously } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { FirebaseClientProvider } from '@/firebase';
+import { cn } from '@/lib/utils';
 
 
 interface Role {
@@ -100,12 +101,15 @@ function LoginPageContent() {
                                 <div>
                                     <p className="text-center text-sm text-neutral-400 mb-4">Select your role to begin:</p>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        {roles.map(role => (
+                                        {roles.map((role, index) => (
                                             <button
                                                 key={role.title}
                                                 onClick={() => handleRoleSelect(role)}
                                                 disabled={!!loadingRole}
-                                                className="w-full text-left p-3 rounded-lg bg-[#252222] border border-[#4A4747] hover:border-primary hover:shadow-lg hover:-translate-y-0.5 transition-all group h-full min-h-[72px] disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className={cn(
+                                                    "w-full text-left p-3 rounded-lg bg-[#252222] border border-[#4A4747] hover:border-primary hover:shadow-lg hover:-translate-y-0.5 transition-all group h-full min-h-[72px] disabled:opacity-50 disabled:cursor-not-allowed",
+                                                    index === roles.length - 1 && roles.length % 2 !== 0 && "sm:col-span-2"
+                                                )}
                                             >
                                                 <div className="flex items-center gap-3">
                                                     <div className="p-2 bg-[#1E1C1C] rounded-md border border-[#4A4747] group-hover:border-primary transition-colors">

@@ -18,15 +18,18 @@ import { Home, FileText, Settings, AlertTriangle, CheckSquare, Package, UserCog,
 import { serviceCatalog, type UserRole } from "@/lib/service-catalog";
 import { ShiftHandoverAssistant } from "./shift-handover-assistant";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-
-// Mock role for demonstration. In a real app, this would come from an auth hook.
-const MOCK_CURRENT_USER_ROLE: UserRole = "Admin";
+import { useUser } from "@/firebase/auth/use-user";
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
+  
+  // Map the Firebase/Auth role to our UserRole type
+  // Default to Operator if no specific role claim is found (fallback)
+  const currentUserRole: UserRole = (user?.role as UserRole) || "Operator";
 
   const userVisibleServices = serviceCatalog.filter(service => 
-    service.enabled && service.rolesAllowed.includes(MOCK_CURRENT_USER_ROLE)
+    service.enabled && service.rolesAllowed.includes(currentUserRole)
   );
 
   const uniqueMenuLinks = Array.from(new Set(userVisibleServices.map(s => s.href)))
@@ -152,7 +155,7 @@ export function AppSidebar() {
             </SidebarMenuItem>
           ))}
             
-          {MOCK_CURRENT_USER_ROLE === 'Admin' && (
+          {currentUserRole === 'Admin' && (
             <>
                 <SidebarSeparator />
                 <SidebarMenuItem>
