@@ -44,9 +44,7 @@ export const useFirebaseApp = () => {
 
 export const useAuth = () => {
   const { auth } = useFirebase();
-  if (!auth) {
-    throw new Error('useAuth must be used within a FirebaseProvider');
-  }
+  // Allow auth to be null initially, components should handle this.
   return auth;
 };
 
