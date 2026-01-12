@@ -4,7 +4,7 @@
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { RoleProvider } from '@/contexts/role-provider';
-import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { FirebaseClientProvider } from '@/firebase';
 
 export default function RootLayout({
   children,
