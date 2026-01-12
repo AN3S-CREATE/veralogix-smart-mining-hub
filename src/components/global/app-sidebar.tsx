@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from "next/link";
@@ -14,7 +13,7 @@ import {
   SidebarSeparator,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Home, FileText, Settings, AlertTriangle, CheckSquare, Package, UserCog, Users } from "lucide-react";
+import { Home, FileText, Settings, AlertTriangle, CheckSquare, Package, UserCog, Users, TrendingUp } from "lucide-react";
 import { serviceCatalog, type UserRole } from "@/lib/service-catalog";
 import { ShiftHandoverAssistant } from "./shift-handover-assistant";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -88,6 +87,15 @@ export function AppSidebar() {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={pathname.startsWith('/roi')}>
+              <Link href="/roi">
+                <TrendingUp />
+                <span>Smart ROI</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           
           <SidebarSeparator />
 
@@ -113,7 +121,7 @@ export function AppSidebar() {
           </SidebarMenuItem>
 
           {uniqueMenuLinks.map((item) => (
-            item.id !== 'smart-people' && ( // Exclude the generic Smart People link
+            (item.id !== 'smart-people' && item.id !== 'smart-roi') && (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton asChild isActive={pathname.startsWith(item.href)}>
                   <Link href={item.href}>

@@ -1,4 +1,3 @@
-
 import {
   GitCommit,
   Car,
@@ -20,6 +19,7 @@ import {
   Container,
   Mountain,
   Package,
+  TrendingUp,
 } from "lucide-react";
 import type { StatusPillStatus } from "@/components/shared/status-pill";
 import { PeopleComplianceWidget } from "@/app/(dashboard)/hub/components/widgets/people-compliance-widget";
@@ -155,6 +155,22 @@ export const serviceCatalog: ServiceDefinition[] = [
     enabled: true,
     rolesAllowed: ["Admin", "Supervisor", "Executive", "Operator", "HR"],
     widget: PeopleComplianceWidget,
+  },
+   {
+    id: 'smart-roi',
+    title: 'Smart ROI',
+    description: 'Quantifying the value of the Smart Mining Hub.',
+    icon: TrendingUp,
+    href: '/roi',
+    status: 'OK',
+    kpis: [
+      { label: 'AI-Driven Savings', value: 'R1.2M', isAI: true },
+      { label: 'Operational Uplift', value: '+7.8%', isAI: true },
+      { label: 'Safety Reduction', value: '-22%', isAI: true },
+    ],
+    enabled: true,
+    rolesAllowed: ['Admin', 'Executive', 'Viewer'],
+    widget: SmartManagementWidget, // Placeholder widget
   },
   {
     id: "smart-management",
