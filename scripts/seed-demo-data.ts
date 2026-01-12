@@ -44,8 +44,10 @@ async function createAuthUserIfNotExists(uid: string, email: string, password?: 
         await auth.getUser(uid);
         console.log(`Auth user ${email} already exists.`);
         // Optionally update user if needed
-        await auth.updateUser(uid, { email, password });
-        console.log(`Updated password for ${email}.`);
+        if (password) {
+            await auth.updateUser(uid, { email, password });
+            console.log(`Updated password for ${email}.`);
+        }
     } catch (error: any) {
         if (error.code === 'auth/user-not-found') {
             console.log(`Creating auth user: ${email}`);
@@ -296,5 +298,3 @@ async function main() {
 }
 
 main();
-
-    
