@@ -16,6 +16,16 @@ function DashboardLayoutContent({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { role } = useRole();
+  const router = useRouter();
+
+  useEffect(() => {
+    // This logic must run in useEffect to avoid hydration errors.
+    // It depends on the 'role', which is determined from localStorage.
+    if (role === 'Operator') {
+      router.push('/operator');
+    }
+  }, [role, router]);
   
   return (
     <SidebarProvider>
