@@ -18,15 +18,14 @@ import { Home, FileText, Settings, AlertTriangle, CheckSquare, Package, UserCog,
 import { serviceCatalog, type UserRole } from "@/lib/service-catalog";
 import { ShiftHandoverAssistant } from "./shift-handover-assistant";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { useUser } from "@/firebase/auth/use-user";
+import { useRole } from "@/contexts/role-provider";
+
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { user } = useUser();
-  
-  // Map the Firebase/Auth role to our UserRole type
-  // Default to Operator if no specific role claim is found (fallback)
-  const currentUserRole: UserRole = (user?.role as UserRole) || "Operator";
+  const { role } = useRole();
+
+  const currentUserRole: UserRole = role || "Viewer";
 
   const userVisibleServices = serviceCatalog.filter(service => 
     service.enabled && service.rolesAllowed.includes(currentUserRole)

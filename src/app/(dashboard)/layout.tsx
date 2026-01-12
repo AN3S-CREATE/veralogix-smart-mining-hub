@@ -6,6 +6,10 @@ import { PageLoader } from "@/components/global/page-loader";
 import { Sidebar, SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/global/app-sidebar";
 import { OfflineBanner } from "@/components/shared/offline-banner";
+import { useRole } from "@/contexts/role-provider";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 
 function DashboardLayoutContent({
   children,
