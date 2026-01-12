@@ -35,6 +35,7 @@ function LoginPageContent() {
 
         setLoading(true);
         try {
+            // Correctly pass the password to the sign-in function
             await signInWithEmailAndPassword(auth, 'dev@veralogix.com', password);
             router.push('/hub');
         } catch (error) {
