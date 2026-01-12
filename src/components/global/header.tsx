@@ -19,7 +19,7 @@ export function Header() {
   const { role } = useRole();
 
   useEffect(() => {
-    // This code now runs only on the client, after hydration
+    // This code now runs only on the client, after hydration, to prevent mismatch
     const updateTime = () => {
       setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     };

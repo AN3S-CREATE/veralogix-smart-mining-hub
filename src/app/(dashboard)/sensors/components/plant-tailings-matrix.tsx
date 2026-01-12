@@ -40,6 +40,7 @@ export function PlantTailingsMatrix() {
     const [matrixData, setMatrixData] = useState<MatrixData | null>(null);
 
     useEffect(() => {
+        // Generate data on the client side to avoid hydration errors
         setMatrixData(generateMatrixData());
     }, []);
 
