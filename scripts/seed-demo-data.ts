@@ -10,10 +10,13 @@
 
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
 import { addDays, subDays, formatISO, addHours, subMinutes } from 'date-fns';
 
 // --- Configuration ---
 const DEMO_TENANT_ID = 'veralogix-pilbara';
+const DEV_USER_EMAIL = 'dev@veralogix.com';
+const DEV_USER_PASSWORD = 'veralogix';
 
 // --- Firebase Admin Initialization ---
 try {
@@ -32,8 +35,34 @@ try {
 }
 
 const db = getFirestore();
+const auth = getAuth();
 
 // --- Helper Functions ---
+
+async function createAuthUserIfNotExists(uid: string, email: string, password?: string) {
+    try {
+        await auth.getUser(uid);
+        console.log(`Auth user ${email} already exists.`);
+        // Optionally update user if needed
+        await auth.updateUser(uid, { email, password });
+        console.log(`Updated password for ${email}.`);
+    } catch (error: any) {
+        if (error.code === 'auth/user-not-found') {
+            console.log(`Creating auth user: ${email}`);
+            await auth.createUser({
+                uid,
+                email,
+                password,
+                emailVerified: true,
+            });
+            console.log(`Successfully created auth user: ${email}`);
+        } else {
+            throw error;
+        }
+    }
+}
+
+
 async function clearCollection(collectionName: string) {
   console.log(`Clearing collection: ${collectionName} for tenant: ${DEMO_TENANT_ID}`);
   const collectionRef = db.collection(collectionName);
@@ -72,6 +101,7 @@ async function seedCollection(collectionName: string, data: any[], idField?: str
 
 function generateUsers() {
     return [
+        { uid: 'dev-user', email: DEV_USER_EMAIL, displayName: 'Dev User', roleIds: ['admin'] },
         { uid: 'admin-user-01', email: 'admin@veralogix.com', displayName: 'Admin User', roleIds: ['admin'] },
         { uid: 'manager-user-01', email: 'manager@veralogix.com', displayName: 'Shift Manager', roleIds: ['supervisor'] },
         { uid: 'employee-user-01', email: 'employee@veralogix.com', displayName: 'John Doe', roleIds: ['operator'] },
@@ -139,6 +169,7 @@ function generatePaperlessConsents() {
 
 function generateEmployeeProfiles() {
     return [
+        { uid: 'dev-user', employeeId: 'DEV001', firstName: 'Dev', lastName: 'User', position: 'Developer', department: 'IT', site: 'Head Office', contact: { phone: '555-0100', email: DEV_USER_EMAIL } },
         { uid: 'employee-user-01', employeeId: 'EMP001', firstName: 'John', lastName: 'Doe', position: 'Haul Truck Operator', department: 'Operations', site: 'Pilbara Mine', contact: { phone: '555-0101', email: 'employee@veralogix.com' }},
         { uid: 'employee-user-02', employeeId: 'EMP002', firstName: 'Jane', lastName: 'Smith', position: 'Excavator Operator', department: 'Operations', site: 'Pilbara Mine', contact: { phone: '555-0102', email: 'employee2@veralogix.com' }},
         { uid: 'admin-user-01', employeeId: 'ADM001', firstName: 'Admin', lastName: 'User', position: 'System Administrator', department: 'IT', site: 'Head Office', contact: { phone: '555-0103', email: 'admin@veralogix.com' }},
@@ -210,6 +241,9 @@ async function main() {
   console.log('Starting Firestore database seeding...');
 
   try {
+    // Create the dev user in Firebase Auth
+    await createAuthUserIfNotExists('dev-user', DEV_USER_EMAIL, DEV_USER_PASSWORD);
+
     // Clear existing demo data
     await clearCollection('users');
     await clearCollection('roles');
@@ -262,3 +296,5 @@ async function main() {
 }
 
 main();
+
+    
