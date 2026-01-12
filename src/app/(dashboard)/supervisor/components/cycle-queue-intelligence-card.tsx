@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -18,18 +18,21 @@ const chartConfig = {
 
 export function CycleQueueIntelligenceCard() {
   const firestore = useFirestore();
+  const [passportsQuery, setPassportsQuery] = useState<Query | null>(null);
 
-  // Query for completed passports in the last 12 hours for cycle time analysis
-  const passportsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
-    return query(
-      collection(firestore, 'loadPassports'),
-      where('status', '==', 'Completed'),
-      where('createdAt', '>=', Timestamp.fromDate(twelveHoursAgo)),
-      orderBy('createdAt', 'desc')
-    );
+  useEffect(() => {
+    if (firestore) {
+      const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
+      const q = query(
+        collection(firestore, 'loadPassports'),
+        where('status', '==', 'Completed'),
+        where('createdAt', '>=', Timestamp.fromDate(twelveHoursAgo)),
+        orderBy('createdAt', 'desc')
+      );
+      setPassportsQuery(q);
+    }
   }, [firestore]);
+  
 
   const { data: passports, loading, error } = useCollection(passportsQuery);
 
@@ -75,7 +78,7 @@ export function CycleQueueIntelligenceCard() {
         <CardDescription>Analysis of haulage cycle performance.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {loading ? (
+        {loading || !passportsQuery ? (
             <div className="flex justify-center items-center h-64"><Loader2 className="size-8 animate-spin text-primary" /></div>
         ) : error ? (
             <p className="text-destructive text-center">Error loading cycle data.</p>
