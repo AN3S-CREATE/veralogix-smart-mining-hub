@@ -5,25 +5,30 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { Loader2, User, Shield, Briefcase, UserCog } from "lucide-react";
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { signInWithEmailAndPassword, type FirebaseError } from 'firebase/auth';
+import { signInAnonymously, type FirebaseError } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { cn } from '@/lib/utils';
+import type { UserRole } from '@/lib/service-catalog';
+
+const roles: { id: UserRole; label: string; icon: React.ElementType }[] = [
+  { id: 'Operator', label: 'Operator', icon: User },
+  { id: 'Supervisor', label: 'Supervisor', icon: Shield },
+  { id: 'Executive', label: 'Executive', icon: Briefcase },
+  { id: 'Admin', label: 'Admin', icon: UserCog },
+];
 
 function LoginPageContent() {
     const router = useRouter();
     const auth = useAuth();
     const { toast } = useToast();
-    const [loading, setLoading] = useState(false);
-    const [password, setPassword] = useState('veralogix');
+    const [loading, setLoading] = useState<UserRole | null>(null);
 
-    const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleLogin = async (role: UserRole) => {
         if (!auth) {
             toast({
                 title: "Authentication Error",
@@ -33,26 +38,23 @@ function LoginPageContent() {
             return;
         }
 
-        setLoading(true);
+        setLoading(role);
         try {
-            await signInWithEmailAndPassword(auth, 'dev@veralogix.com', password);
+            // In a real app, you might set a custom claim for the role after this.
+            await signInAnonymously(auth);
+            // For prototype, we store the role in localStorage to be picked up by the dashboard.
+            localStorage.setItem('userRole', role);
             router.push('/hub');
         } catch (error) {
             const firebaseError = error as FirebaseError;
-            console.error("Sign-in failed:", firebaseError.code, firebaseError.message);
-            
-            let description = "An unknown error occurred. Please check the console.";
-            if (firebaseError.code === 'auth/invalid-credential' || firebaseError.code === 'auth/wrong-password' || firebaseError.code === 'auth/user-not-found') {
-                description = "Invalid credentials. Please ensure the password is correct and the database has been seeded with `npm run db:seed`.";
-            }
-
+            console.error("Anonymous sign-in failed:", firebaseError.code, firebaseError.message);
             toast({
                 title: "Login Failed",
-                description: description,
+                description: "Could not sign in. Please check the console for details.",
                 variant: "destructive",
             });
         } finally {
-            setLoading(false);
+            setLoading(null);
         }
     };
     
@@ -75,7 +77,7 @@ function LoginPageContent() {
                 )}
             </div>
             <main className="relative min-h-screen w-full flex justify-center items-center p-4 sm:p-8">
-                 <div className="w-full max-w-sm">
+                 <div className="w-full max-w-md">
                     <Card className="w-full bg-[#1E1C1C]/80 backdrop-blur-sm border-[#4A4747] text-white overflow-hidden">
                         <CardHeader className="items-center text-center">
                              <div className="flex justify-center mb-4">
@@ -90,39 +92,30 @@ function LoginPageContent() {
                                     />
                                 )}
                             </div>
-                            <CardTitle className="text-2xl">Welcome Back</CardTitle>
-                            <CardDescription className="text-neutral-400">Sign in to access the Smart Mining Hub.</CardDescription>
+                            <CardTitle className="text-2xl">Select Your Role</CardTitle>
+                            <CardDescription className="text-neutral-400">Choose a role to enter the Smart Mining Hub.</CardDescription>
                         </CardHeader>
                         <CardContent className="p-6 lg:p-8 pt-0">
-                             <form onSubmit={handleLogin} className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="email">Email</Label>
-                                    <Input 
-                                        id="email" 
-                                        type="email" 
-                                        value="dev@veralogix.com" 
-                                        readOnly
-                                        disabled 
-                                        className="bg-[#252222] border-[#4A4747] disabled:opacity-75"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="password">Password</Label>
-                                    <Input 
-                                        id="password" 
-                                        type="password" 
-                                        placeholder="Enter 'veralogix'"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required 
-                                        className="bg-[#252222] border-[#4A4747] placeholder:text-neutral-500"
-                                    />
-                                </div>
-                                <Button type="submit" className="w-full" disabled={loading}>
-                                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                                    Sign In
-                                </Button>
-                            </form>
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {roles.map((role) => (
+                                    <Button
+                                        key={role.id}
+                                        variant="outline"
+                                        className="h-20 flex-col gap-2 text-base bg-white/5 border-white/20 hover:bg-white/10"
+                                        onClick={() => handleLogin(role.id)}
+                                        disabled={!!loading}
+                                    >
+                                        {loading === role.id ? (
+                                            <Loader2 className="size-6 animate-spin" />
+                                        ) : (
+                                            <>
+                                                <role.icon className="size-6 text-primary" />
+                                                {role.label}
+                                            </>
+                                        )}
+                                    </Button>
+                                ))}
+                             </div>
                         </CardContent>
                     </Card>
                     <div className="mx-auto mt-6 flex items-center justify-center gap-2">

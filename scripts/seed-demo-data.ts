@@ -15,8 +15,6 @@ import { addDays, subDays, formatISO, addHours, subMinutes } from 'date-fns';
 
 // --- Configuration ---
 const DEMO_TENANT_ID = 'veralogix-pilbara';
-const DEV_USER_EMAIL = 'dev@veralogix.com';
-const DEV_USER_PASSWORD = 'veralogix';
 
 // --- Firebase Admin Initialization ---
 try {
@@ -39,28 +37,24 @@ const auth = getAuth();
 
 // --- Helper Functions ---
 
-async function createAuthUserIfNotExists(uid: string, email: string, password?: string) {
+async function createOrUpdateAuthUser(uid: string, email: string) {
     try {
-        const userRecord = await auth.getUserByEmail(email);
-        console.log(`Auth user ${email} already exists with uid ${userRecord.uid}.`);
-        // Admin SDK cannot set password directly on update, this is a limitation for security.
-        // It's assumed password is set on creation and managed by user flow thereafter.
-        // If a password reset is needed, specific admin functions must be used.
-        if (userRecord.uid !== uid) {
-            console.warn(`Warning: Auth user ${email} exists with a different UID (${userRecord.uid}) than expected (${uid}).`);
-        }
+        const userRecord = await auth.getUser(uid);
+        console.log(`Auth user ${email} (${uid}) already exists. Updating properties.`);
+        await auth.updateUser(uid, {
+            email: email,
+            emailVerified: true,
+        });
     } catch (error: any) {
         if (error.code === 'auth/user-not-found') {
-            console.log(`Creating auth user: ${email}`);
+            console.log(`Creating auth user: ${email} (${uid})`);
             await auth.createUser({
                 uid,
                 email,
-                password,
                 emailVerified: true,
             });
             console.log(`Successfully created auth user: ${email}`);
         } else {
-            // Re-throw other errors
             console.error(`Error checking/creating auth user ${email}:`, error);
             throw error;
         }
@@ -106,7 +100,7 @@ async function seedCollection(collectionName: string, data: any[], idField?: str
 
 function generateUsers() {
     return [
-        { uid: 'dev-user', email: DEV_USER_EMAIL, displayName: 'Dev User', roleIds: ['admin'] },
+        { uid: 'dev-user', email: 'dev@veralogix.com', displayName: 'Dev User', roleIds: ['admin'] },
         { uid: 'admin-user-01', email: 'admin@veralogix.com', displayName: 'Admin User', roleIds: ['admin'] },
         { uid: 'manager-user-01', email: 'manager@veralogix.com', displayName: 'Shift Manager', roleIds: ['supervisor'] },
         { uid: 'employee-user-01', email: 'employee@veralogix.com', displayName: 'John Doe', roleIds: ['operator'] },
@@ -174,7 +168,7 @@ function generatePaperlessConsents() {
 
 function generateEmployeeProfiles() {
     return [
-        { uid: 'dev-user', employeeId: 'DEV001', firstName: 'Dev', lastName: 'User', position: 'Developer', department: 'IT', site: 'Head Office', contact: { phone: '555-0100', email: DEV_USER_EMAIL } },
+        { uid: 'dev-user', employeeId: 'DEV001', firstName: 'Dev', lastName: 'User', position: 'Developer', department: 'IT', site: 'Head Office', contact: { phone: '555-0100', email: 'dev@veralogix.com' } },
         { uid: 'employee-user-01', employeeId: 'EMP001', firstName: 'John', lastName: 'Doe', position: 'Haul Truck Operator', department: 'Operations', site: 'Pilbara Mine', contact: { phone: '555-0101', email: 'employee@veralogix.com' }},
         { uid: 'employee-user-02', employeeId: 'EMP002', firstName: 'Jane', lastName: 'Smith', position: 'Excavator Operator', department: 'Operations', site: 'Pilbara Mine', contact: { phone: '555-0102', email: 'employee2@veralogix.com' }},
         { uid: 'admin-user-01', employeeId: 'ADM001', firstName: 'Admin', lastName: 'User', position: 'System Administrator', department: 'IT', site: 'Head Office', contact: { phone: '555-0103', email: 'admin@veralogix.com' }},
@@ -246,8 +240,11 @@ async function main() {
   console.log('Starting Firestore database seeding...');
 
   try {
-    // Create the dev user in Firebase Auth
-    await createAuthUserIfNotExists('dev-user', DEV_USER_EMAIL, DEV_USER_PASSWORD);
+    const users = generateUsers();
+    // Create auth users first
+    for (const user of users) {
+        await createOrUpdateAuthUser(user.uid, user.email);
+    }
 
     // Clear existing demo data
     await clearCollection('users');
@@ -265,7 +262,6 @@ async function main() {
     await clearCollection('stockpileVolumes');
     
     // Generate new data
-    const users = generateUsers();
     const { roles, permissions } = generateRolesAndPermissions();
     const payslips = generatePayslips();
     const consents = generatePaperlessConsents();
