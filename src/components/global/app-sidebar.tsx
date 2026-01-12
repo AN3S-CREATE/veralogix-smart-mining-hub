@@ -65,7 +65,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="p-4 flex justify-center items-center">
-        <Link href="/hub">
+        <Link href="/dashboard">
             {sidebarLogo && (
                 <Image 
                     src={sidebarLogo.imageUrl} 
@@ -82,8 +82,8 @@ export function AppSidebar() {
       <SidebarContent className="pt-4">
         <SidebarMenu>
           <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === '/hub'}>
-                <Link href="/hub">
+              <SidebarMenuButton asChild isActive={pathname === '/dashboard'}>
+                <Link href="/dashboard">
                   <Home />
                   <span>Dashboard</span>
                 </Link>

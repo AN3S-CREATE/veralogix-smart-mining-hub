@@ -29,7 +29,7 @@ export function useUser() {
         if (firebaseUser) {
           // For the prototype, we get the role from localStorage.
           // In a real app, this would come from a custom token claim.
-          const role = (localStorage.getItem('userRole') as UserRole) || 'Operator';
+          const role = (localStorage.getItem('userRole') as UserRole) || 'Viewer';
           setUser({ ...firebaseUser, role });
         } else {
           setUser(null);

@@ -10,9 +10,13 @@ import { Separator } from "@/components/ui/separator";
 import { QuickFilterChips } from "./quick-filter-chips";
 import { NaturalLanguageQuery } from "./natural-language-query";
 import { SidebarTrigger } from "../ui/sidebar";
+import { RoleSelector } from './role-selector';
+import { useRole } from '@/contexts/role-provider';
+import { Badge } from '../ui/badge';
 
 export function Header() {
   const [lastUpdated, setLastUpdated] = useState('');
+  const { role } = useRole();
 
   useEffect(() => {
     // This code now runs only on the client, after hydration
@@ -38,8 +42,11 @@ export function Header() {
         <NaturalLanguageQuery />
       </div>
       
-      <div className="hidden lg:flex px-4">
-        <QuickFilterChips />
+       <div className="hidden lg:flex px-4 items-center gap-4">
+        <RoleSelector />
+        <Badge variant="outline" className="border-accent text-accent">
+            Tenant: Veralogix | Role: {role}
+        </Badge>
       </div>
 
 

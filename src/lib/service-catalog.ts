@@ -36,7 +36,8 @@ import { DrillWidget } from "@/app/(dashboard)/hub/components/widgets/drill-widg
 import { StockpileWidget } from "@/app/(dashboard)/hub/components/widgets/stockpile-widget";
 import { LoadPassportWidget } from "@/app/(dashboard)/hub/components/widgets/load-passport-widget";
 
-export type UserRole = "Operator" | "Supervisor" | "Executive" | "Admin";
+export type UserRole = "Operator" | "Supervisor" | "Executive" | "Admin" | "Ops" | "Safety" | "HR" | "Viewer";
+
 
 export interface ServiceDefinition {
   id: string;
@@ -65,7 +66,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "AI Risk Score", value: "58/100", isAI: true },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor", "Executive"],
+    rolesAllowed: ["Admin", "Supervisor", "Executive", "Ops"],
     widget: DrillWidget,
   },
   {
@@ -77,7 +78,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     status: "OK",
     kpis: [],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor"],
+    rolesAllowed: ["Admin", "Supervisor", "Ops"],
     widget: BlastingWidget,
   },
   {
@@ -89,7 +90,7 @@ export const serviceCatalog: ServiceDefinition[] = [
     status: "OK",
     kpis: [],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor"],
+    rolesAllowed: ["Admin", "Supervisor", "Ops"],
     widget: StockpileWidget,
   },
   {
@@ -105,7 +106,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "Total Idle Hours", value: "112 h" },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor", "Operator"],
+    rolesAllowed: ["Admin", "Supervisor", "Operator", "Ops"],
     widget: TransportWidget,
   },
    {
@@ -120,7 +121,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "Active Exceptions", value: "1" },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor"],
+    rolesAllowed: ["Admin", "Supervisor", "Ops"],
     widget: LoadPassportWidget,
   },
   {
@@ -136,7 +137,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "CPS Interventions", value: "4" },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor", "Executive"],
+    rolesAllowed: ["Admin", "Supervisor", "Executive", "Safety"],
     widget: SmartRiskWidget,
   },
   {
@@ -152,7 +153,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "DMRE Audit Readiness", value: "95%", isAI: true },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor", "Executive", "Operator"],
+    rolesAllowed: ["Admin", "Supervisor", "Executive", "Operator", "HR"],
     widget: PeopleComplianceWidget,
   },
   {
@@ -168,7 +169,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "Haulage Uplift", value: "+8.1%" },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Executive"],
+    rolesAllowed: ["Admin", "Executive", "Viewer"],
     widget: SmartManagementWidget,
   },
   {
@@ -184,7 +185,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "AI Road Risk Index", value: "42/100", isAI: true },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor"],
+    rolesAllowed: ["Admin", "Supervisor", "Ops"],
     widget: BlastingWidget, // Example
   },
   {
@@ -216,7 +217,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "AI Anomalies", value: "3", isAI: true },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor"],
+    rolesAllowed: ["Admin", "Supervisor", "Ops"],
     widget: FleetWidget,
   },
   {
@@ -247,7 +248,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "Cost Reduction", value: "-2.5%", isAI: true },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Executive"],
+    rolesAllowed: ["Admin", "Executive", "Viewer"],
   },
   {
     id: "smart-access",
@@ -262,7 +263,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "DMRE audit readiness", value: "95%", isAI: true },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor"],
+    rolesAllowed: ["Admin", "Supervisor", "HR", "Safety"],
     widget: PeopleComplianceWidget,
   },
   {
@@ -278,7 +279,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "Carryback tonnes", value: "1.2t" },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Supervisor", "Operator"],
+    rolesAllowed: ["Admin", "Supervisor", "Operator", "Ops"],
     widget: TransportWidget,
   },
   {
@@ -310,7 +311,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "CO2 Index", value: "98.5" },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Executive"],
+    rolesAllowed: ["Admin", "Executive", "Safety"],
     widget: EnvironmentalWidget,
   },
   {
@@ -326,7 +327,7 @@ export const serviceCatalog: ServiceDefinition[] = [
       { label: "Safety Risk", value: "Low", isAI: true },
     ],
     enabled: true,
-    rolesAllowed: ["Admin", "Executive", "Supervisor"],
+    rolesAllowed: ["Admin", "Executive", "Supervisor", "Viewer"],
     widget: PredictiveWidget,
   },
   {
