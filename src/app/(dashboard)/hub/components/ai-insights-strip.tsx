@@ -4,7 +4,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AreaChart, Area, ResponsiveContainer } from "recharts";
 import { Loader2 } from 'lucide-react';
 import { generateSmartHubInsights } from '@/ai/flows/smarthub-insights';
 import type { SmartHubInsightsOutput } from '@/ai/flows/smarthub-insights';
@@ -16,15 +15,6 @@ const MOCK_OPERATIONAL_DATA = `
 - Fleet: Average queue time at shovels is up 15% vs shift average. Truck TRK-205 has high vibration alerts.
 - Production: Current shift is trending 5% below plan for tonnes moved.
 `;
-
-const forecastData = [
-  { value: 168800 },
-  { value: 170200 },
-  { value: 169500 },
-  { value: 171000 },
-  { value: 172500 },
-  { value: 172000 },
-];
 
 export function AiInsightsStrip() {
   const [insights, setInsights] = useState<SmartHubInsightsOutput | null>(null);
@@ -55,7 +45,7 @@ export function AiInsightsStrip() {
   }, []);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Risk Score Card */}
       <Card className="card-hover">
         <CardHeader>
@@ -69,39 +59,6 @@ export function AiInsightsStrip() {
             <>
               <p className="text-5xl font-bold font-headline text-primary">{insights?.section54Risk.score}<span className="text-3xl text-muted-foreground">/100</span></p>
               <p className="text-xs text-muted-foreground mt-2">{insights?.section54Risk.reasoning}</p>
-            </>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Diesel Forecast Card */}
-      <Card className="card-hover">
-        <CardHeader>
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-base">AI Diesel Spend Forecast (24h)</CardTitle>
-            <Badge variant="outline" className="border-accent text-accent text-xs">AI Prediction</Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {loading ? <Loader2 className="size-8 animate-spin" /> : (
-            <>
-              <div className="flex justify-between items-end">
-                  <p className="text-3xl font-bold font-headline">R{insights?.dieselSpendForecast.predictedCost.toLocaleString()}</p>
-                  <div className="h-12 w-24">
-                      <ResponsiveContainer width="100%" height="100%">
-                          <AreaChart data={forecastData}>
-                              <defs>
-                                  <linearGradient id="forecastFill" x1="0" y1="0" x2="0" y2="1">
-                                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
-                                  </linearGradient>
-                              </defs>
-                              <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" fill="url(#forecastFill)" strokeWidth={2} />
-                          </AreaChart>
-                      </ResponsiveContainer>
-                  </div>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">{insights?.dieselSpendForecast.reasoning}</p>
             </>
           )}
         </CardContent>
