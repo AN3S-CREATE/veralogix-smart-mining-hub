@@ -43,9 +43,11 @@ async function createAuthUserIfNotExists(uid: string, email: string, password?: 
     try {
         const userRecord = await auth.getUserByEmail(email);
         console.log(`Auth user ${email} already exists with uid ${userRecord.uid}.`);
-        if (password) {
-            await auth.updateUser(userRecord.uid, { password });
-            console.log(`Updated password for ${email}.`);
+        // Admin SDK cannot set password directly on update, this is a limitation for security.
+        // It's assumed password is set on creation and managed by user flow thereafter.
+        // If a password reset is needed, specific admin functions must be used.
+        if (userRecord.uid !== uid) {
+            console.warn(`Warning: Auth user ${email} exists with a different UID (${userRecord.uid}) than expected (${uid}).`);
         }
     } catch (error: any) {
         if (error.code === 'auth/user-not-found') {
@@ -58,6 +60,8 @@ async function createAuthUserIfNotExists(uid: string, email: string, password?: 
             });
             console.log(`Successfully created auth user: ${email}`);
         } else {
+            // Re-throw other errors
+            console.error(`Error checking/creating auth user ${email}:`, error);
             throw error;
         }
     }

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, type FirebaseError } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
@@ -38,10 +38,17 @@ function LoginPageContent() {
             await signInWithEmailAndPassword(auth, 'dev@veralogix.com', password);
             router.push('/hub');
         } catch (error) {
-            console.error("Sign-in failed:", error);
+            const firebaseError = error as FirebaseError;
+            console.error("Sign-in failed:", firebaseError.code, firebaseError.message);
+            
+            let description = "An unknown error occurred. Please check the console.";
+            if (firebaseError.code === 'auth/invalid-credential' || firebaseError.code === 'auth/wrong-password' || firebaseError.code === 'auth/user-not-found') {
+                description = "Invalid credentials. Please ensure the password is correct and the database has been seeded with `npm run db:seed`.";
+            }
+
             toast({
                 title: "Login Failed",
-                description: "Invalid credentials. Please ensure the password is correct and the database has been seeded.",
+                description: description,
                 variant: "destructive",
             });
         } finally {
