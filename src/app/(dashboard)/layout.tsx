@@ -5,9 +5,7 @@ import { Header } from "@/components/global/header";
 import { PageLoader } from "@/components/global/page-loader";
 import { Sidebar, SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/global/app-sidebar";
-import { FirebaseClientProvider } from "@/firebase/client-provider";
 import { OfflineBanner } from "@/components/shared/offline-banner";
-import { RoleProvider } from "@/contexts/role-provider";
 
 function DashboardLayoutContent({
   children,
@@ -37,10 +35,6 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <FirebaseClientProvider>
-      <RoleProvider>
-        <DashboardLayoutContent>{children}</DashboardLayoutContent>
-      </RoleProvider>
-    </FirebaseClientProvider>
+      <DashboardLayoutContent>{children}</DashboardLayoutContent>
   );
 }

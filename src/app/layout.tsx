@@ -3,6 +3,8 @@
 
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { RoleProvider } from '@/contexts/role-provider';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export default function RootLayout({
   children,
@@ -20,7 +22,11 @@ export default function RootLayout({
         <meta name="description" content="VeraLogix Smart Mining - Smart Hub" />
       </head>
       <body className="font-body antialiased" suppressHydrationWarning>
-        {children}
+        <FirebaseClientProvider>
+          <RoleProvider>
+            {children}
+          </RoleProvider>
+        </FirebaseClientProvider>
         <Toaster />
       </body>
     </html>
