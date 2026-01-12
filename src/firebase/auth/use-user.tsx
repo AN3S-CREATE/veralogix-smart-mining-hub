@@ -2,48 +2,35 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged, type User } from 'firebase/auth';
-import { useAuth } from '@/firebase/provider';
+import type { User } from 'firebase/auth';
 import type { UserRole } from '@/lib/service-catalog';
 
 // Extend the Firebase User type to include our custom role
-export type AppUser = User & {
+export type AppUser = Partial<User> & {
   role?: UserRole;
+  uid: string;
 };
 
+// Mock user for prototype mode without login
+const mockUser: AppUser = {
+  uid: 'dev-user',
+  email: 'dev@veralogix.com',
+  displayName: 'Dev User',
+  role: 'Viewer' // Default role
+};
+
+
 export function useUser() {
-  const auth = useAuth();
-  const [user, setUser] = useState<AppUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<AppUser | null>(mockUser);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
-
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      (firebaseUser) => {
-        if (firebaseUser) {
-          // For the prototype, we get the role from localStorage.
-          // In a real app, this would come from a custom token claim.
-          const role = (localStorage.getItem('userRole') as UserRole) || 'Viewer';
-          setUser({ ...firebaseUser, role });
-        } else {
-          setUser(null);
-        }
-        setLoading(false);
-      },
-      (error) => {
-        setError(error);
-        setLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [auth]);
+    // In this password-less prototype, we just use the mock user.
+    // The role can be changed via the RoleSelector component.
+    const role = (localStorage.getItem('userRole') as UserRole) || 'Viewer';
+    setUser({ ...mockUser, role });
+  }, []);
 
   return { user, loading, error };
 }
