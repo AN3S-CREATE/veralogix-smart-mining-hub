@@ -41,11 +41,10 @@ const auth = getAuth();
 
 async function createAuthUserIfNotExists(uid: string, email: string, password?: string) {
     try {
-        await auth.getUser(uid);
-        console.log(`Auth user ${email} already exists.`);
-        // Optionally update user if needed
+        const userRecord = await auth.getUserByEmail(email);
+        console.log(`Auth user ${email} already exists with uid ${userRecord.uid}.`);
         if (password) {
-            await auth.updateUser(uid, { email, password });
+            await auth.updateUser(userRecord.uid, { password });
             console.log(`Updated password for ${email}.`);
         }
     } catch (error: any) {

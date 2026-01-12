@@ -13,14 +13,14 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { FirebaseClientProvider } from '@/firebase';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 function LoginPageContent() {
     const router = useRouter();
     const auth = useAuth();
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState('veralogix');
 
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -35,16 +35,16 @@ function LoginPageContent() {
 
         setLoading(true);
         try {
-            // Correctly pass the password to the sign-in function
             await signInWithEmailAndPassword(auth, 'dev@veralogix.com', password);
             router.push('/hub');
         } catch (error) {
             console.error("Sign-in failed:", error);
             toast({
                 title: "Login Failed",
-                description: "Invalid credentials. Please use the provided prototype password.",
+                description: "Invalid credentials. Please ensure the password is correct and the database has been seeded.",
                 variant: "destructive",
             });
+        } finally {
             setLoading(false);
         }
     };
@@ -94,6 +94,7 @@ function LoginPageContent() {
                                         id="email" 
                                         type="email" 
                                         value="dev@veralogix.com" 
+                                        readOnly
                                         disabled 
                                         className="bg-[#252222] border-[#4A4747] disabled:opacity-75"
                                     />
