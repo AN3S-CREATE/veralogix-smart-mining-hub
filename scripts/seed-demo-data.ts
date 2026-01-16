@@ -11,13 +11,14 @@
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
-import { addDays, subDays, formatISO, addHours, subMinutes } from 'date-fns';
+import { addDays, subDays, formatISO, addHours, subMinutes, subHours } from 'date-fns';
 
 // --- Configuration ---
 const DEMO_TENANT_ID = 'veralogix-pilbara';
 
 // --- Firebase Admin Initialization ---
 try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const serviceAccount = require('../service-account.json');
   if (admin.apps.length === 0) {
     admin.initializeApp({
@@ -39,7 +40,7 @@ const auth = getAuth();
 
 async function createOrUpdateAuthUser(uid: string, email: string) {
     try {
-        const userRecord = await auth.getUser(uid);
+        await auth.getUser(uid);
         console.log(`Auth user ${email} (${uid}) already exists. Updating properties.`);
         await auth.updateUser(uid, {
             email: email,

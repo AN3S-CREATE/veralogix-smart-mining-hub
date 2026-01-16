@@ -68,7 +68,7 @@
     "@types/nprogress": "^0.2.3",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "firebase-admin": "^12.2.0",
+    "firebase-admin": "^12.7.0",
     "genkit-cli": "latest",
     "playwright": "^1.55.0",
     "postcss": "^8",

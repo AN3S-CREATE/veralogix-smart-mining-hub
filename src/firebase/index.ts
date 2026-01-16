@@ -4,6 +4,8 @@
 import { initializeApp, getApp, getApps, type FirebaseOptions } from "firebase/app";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getStorage, connectStorageEmulator } from "firebase/storage";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { firebaseConfig } from "./config";
 import { useMemo } from "react";
 
@@ -22,12 +24,16 @@ export function initializeFirebase(options: FirebaseOptions = firebaseConfig) {
       firebaseApp: app,
       firestore: getFirestore(app),
       auth: getAuth(app),
+      storage: getStorage(app),
+      functions: getFunctions(app),
     };
   }
 
   const firebaseApp = initializeApp(options);
   const auth = getAuth(firebaseApp);
   const firestore = getFirestore(firebaseApp);
+  const storage = getStorage(firebaseApp);
+  const functions = getFunctions(firebaseApp);
 
   // Connect to emulators if in development
   if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_EMULATOR_HOST) {
@@ -44,7 +50,13 @@ export function initializeFirebase(options: FirebaseOptions = firebaseConfig) {
     if (!firestore.toJSON().settings.host) {
         connectFirestoreEmulator(firestore, host, 8080);
     }
+    
+    // Connect Storage Emulator
+    connectStorageEmulator(storage, host, 9199);
+    
+    // Connect Functions Emulator
+    connectFunctionsEmulator(functions, host, 5001);
   }
 
-  return { firebaseApp, auth, firestore };
+  return { firebaseApp, auth, firestore, storage, functions };
 }

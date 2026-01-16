@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { generateShiftHandoverReport } from '@/ai/flows/shift-handover-report';
 import { Loader2, Redo } from 'lucide-react';
@@ -36,9 +36,9 @@ export default function ShiftHandoverPage() {
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     fetchReport();
-  });
+  }, []);
 
   return (
     <div className="space-y-6">
