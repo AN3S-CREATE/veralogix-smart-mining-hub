@@ -21,7 +21,7 @@
     "inlineChat.mode": "preview",
     "geminicodeassist.project": "intrepid-quarter-3pvm6",
     "IDX.aI.modelProvider": "gemini-api",
-    "IDX.aI.geminiApiKey": "AIzaSyD0jHS89wPD7h-uXtSstRSbtDUfVer6zSU",
+    "IDX.aI.geminiApiKey": "Your_API_KEY",
     "IDX.aI.geminiModel": "gemini-3-pro-preview",
     "git.autofetch": true,
     "IDX.agenticWorkspace": true,
