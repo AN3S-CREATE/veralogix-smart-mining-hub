@@ -17,10 +17,18 @@ AI features use Genkit (Google AI / Gemini). There is only one service to run.
   role picker (Admin/Supervisor/Operator/Executive/Viewer) stored in `localStorage`.
   Selecting a role navigates into the dashboard. No credentials are needed to use the app.
 - **The Firebase web SDK is initialized at startup and crashes the whole app if the
-  API key is empty** (`auth/invalid-api-key`, thrown in `src/firebase/index.ts`). A
-  git-ignored `.env.local` with non-empty placeholder `NEXT_PUBLIC_FIREBASE_*` values lets
-  the app boot. Recreate it if missing (it is not committed). It also maps
-  `GOOGLE_GENAI_API_KEY=$GEMINI_AI_API_KEY` so Genkit AI flows can use the injected key.
+  API key is empty** (auth/invalid-api-key, thrown in src/firebase/index.ts). A
+  git-ignored .env.local with non-empty placeholder values lets the app boot. Recreate it if missing with these contents:
+
+  NEXT_PUBLIC_FIREBASE_API_KEY=placeholder
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=placeholder
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID=placeholder
+  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=placeholder
+  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=placeholder
+  NEXT_PUBLIC_FIREBASE_APP_ID=placeholder
+  GOOGLE_GENAI_API_KEY=placeholder
+
+  Note: You can map GOOGLE_GENAI_API_KEY to GEMINI_AI_API_KEY so Genkit AI flows can use the injected key.
 - **Real Firestore data requires a real Firebase project.** With placeholder config,
   Firestore-backed widgets degrade gracefully (empty / spinning loaders) — this is
   expected, not a bug. To load real data you need real `NEXT_PUBLIC_FIREBASE_*` values and
